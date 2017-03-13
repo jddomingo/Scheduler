@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Home</string>
+    <string name="app_name">Mi Band Scheduler</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -80,4 +80,5 @@
 
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="title_activity_schedule_page">Add Schedule</string>
+    <string name="pref_file_key" />
 </resources>

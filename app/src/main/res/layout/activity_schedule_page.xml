@@ -193,17 +193,5 @@
         android:layout_alignRight="@+id/toggleButton11"
         android:layout_alignEnd="@+id/toggleButton11" />
 
-    <DatePicker
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:datePickerMode="spinner"
-        android:calendarViewShown="false"
-        android:id="@+id/datePicker"
-        android:layout_above="@+id/fab"
-        android:layout_alignRight="@+id/timePicker"
-        android:layout_alignEnd="@+id/timePicker"
-        android:layout_below="@+id/timePicker">
-    </DatePicker>
-
 
 </RelativeLayout>

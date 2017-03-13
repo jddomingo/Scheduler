@@ -126,6 +126,9 @@ public class SchedulePage extends AppCompatActivity
         } else if (id == R.id.nav_today) {
             Intent intent = new Intent(this, SchedulePage.class);
             startActivity(intent);
+        } else if (id == R.id.list) {
+            Intent intent = new Intent(this, ListActivity.class);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

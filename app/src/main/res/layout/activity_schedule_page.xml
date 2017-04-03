@@ -9,18 +9,6 @@
     android:fitsSystemWindows="true"
     tools:context="com.example.gabd.scheduler.SchedulePage">
 
-    <ToggleButton
-        android:text="ToggleButton"
-        android:textOff="FRI"
-        android:textOn="FRI"
-        android:layout_height="wrap_content"
-        android:id="@+id/toggleButton10"
-        android:layout_width="30dp"
-        android:layout_alignBaseline="@+id/toggleButton7"
-        android:layout_alignBottom="@+id/toggleButton7"
-        android:layout_toRightOf="@+id/toggleButton3"
-        android:layout_toEndOf="@+id/toggleButton3" />
-
     <Button
         android:id="@+id/fab"
         android:text ="Add Alarm"
@@ -58,30 +46,25 @@
         android:text="ToggleButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/toggleButton2"
+        android:id="@+id/daily"
         android:layout_below="@+id/editText"
         android:layout_alignLeft="@+id/editText"
-        android:layout_alignStart="@+id/editText" />
+        android:layout_alignStart="@+id/editText"
+        android:textOff="DAILY"
+        android:textOn="DAILY"/>
 
     <ToggleButton
         android:text="ToggleButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/toggleButton3"
+        android:id="@+id/weekly"
         android:layout_below="@+id/editText"
-        android:layout_toRightOf="@+id/toggleButton2"
-        android:layout_toEndOf="@+id/toggleButton2"
+        android:layout_toRightOf="@+id/daily"
+        android:layout_toEndOf="@+id/daily"
         android:layout_marginLeft="11dp"
-        android:layout_marginStart="11dp" />
-
-    <ToggleButton
-        android:text="ToggleButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/toggleButton"
-        android:layout_below="@+id/editText"
-        android:layout_toRightOf="@+id/toggleButton3"
-        android:layout_toEndOf="@+id/toggleButton3" />
+        android:layout_marginStart="11dp"
+        android:textOff="WEEKLY"
+        android:textOn="WEEKLY" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -89,76 +72,12 @@
         android:inputType="textPersonName"
         android:text="On these days"
         android:ems="10"
-        android:layout_below="@+id/toggleButton2"
+        android:layout_below="@+id/daily"
         android:id="@+id/editText2"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
-
-    <ToggleButton
-        android:text="ToggleButton"
-        android:textOff="MON"
-        android:textOn="MON"
-        android:layout_height="wrap_content"
-        android:id="@+id/toggleButton4"
-        android:layout_width="30dp"
-        android:layout_below="@+id/editText2"
-        android:layout_alignLeft="@+id/toggleButton2"
-        android:layout_alignStart="@+id/toggleButton2"
-        android:layout_marginLeft="13dp"
-        android:layout_marginStart="13dp"
-        android:layout_marginTop="13dp" />
-
-    <ToggleButton
-        android:text="ToggleButton"
-        android:textOff="TUE"
-        android:textOn="TUE"
-        android:layout_height="wrap_content"
-        android:id="@+id/toggleButton5"
-        android:layout_width="30dp"
-        android:layout_alignBaseline="@+id/toggleButton4"
-        android:layout_alignBottom="@+id/toggleButton4"
-        android:layout_alignRight="@+id/toggleButton2"
-        android:layout_alignEnd="@+id/toggleButton2" />
-
-    <ToggleButton
-        android:text="ToggleButton"
-        android:textOff="WED"
-        android:textOn="WED"
-        android:layout_height="wrap_content"
-        android:id="@+id/toggleButton6"
-        android:layout_width="30dp"
-        android:layout_alignBaseline="@+id/toggleButton5"
-        android:layout_alignBottom="@+id/toggleButton5"
-        android:layout_alignLeft="@+id/toggleButton3"
-        android:layout_alignStart="@+id/toggleButton3" />
-
-    <ToggleButton
-        android:text="ToggleButton"
-        android:textOff="THU"
-        android:textOn="THU"
-        android:layout_height="wrap_content"
-        android:id="@+id/toggleButton7"
-        android:layout_width="30dp"
-        android:layout_marginLeft="13dp"
-        android:layout_marginStart="13dp"
-        android:layout_alignBaseline="@+id/toggleButton6"
-        android:layout_alignBottom="@+id/toggleButton6"
-        android:layout_toRightOf="@+id/toggleButton6"
-        android:layout_toEndOf="@+id/toggleButton6" />
-
-    <ToggleButton
-        android:text="ToggleButton"
-        android:textOff="SUN"
-        android:textOn="SUN"
-        android:layout_height="wrap_content"
-        android:id="@+id/toggleButton9"
-        android:layout_width="30dp"
-        android:layout_alignBaseline="@+id/toggleButton11"
-        android:layout_alignBottom="@+id/toggleButton11"
-        android:layout_toRightOf="@+id/toggleButton"
-        android:layout_toEndOf="@+id/toggleButton" />
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -172,26 +91,100 @@
 
     <ToggleButton
         android:text="ToggleButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/hourly"
+        android:textOff="HOURLY"
+        android:textOn="HOURLY"
+        android:layout_below="@+id/editText"
+        android:layout_alignRight="@+id/fab"
+        android:layout_alignEnd="@+id/fab" />
+
+    <ToggleButton
+        android:text="ToggleButton"
         android:textOff="SAT"
         android:textOn="SAT"
         android:layout_height="wrap_content"
         android:id="@+id/toggleButton11"
         android:layout_width="30dp"
-        android:layout_alignBaseline="@+id/toggleButton10"
-        android:layout_alignBottom="@+id/toggleButton10"
-        android:layout_toRightOf="@+id/toggleButton10"
-        android:layout_toEndOf="@+id/toggleButton10"
-        android:layout_marginLeft="13dp"
-        android:layout_marginStart="13dp" />
+        android:layout_below="@+id/editText2"
+        android:layout_alignRight="@+id/hourly"
+        android:layout_alignEnd="@+id/hourly" />
+
+    <ToggleButton
+        android:text="ToggleButton"
+        android:textOff="FRI"
+        android:textOn="FRI"
+        android:layout_height="wrap_content"
+        android:id="@+id/toggleButton10"
+        android:layout_width="30dp"
+        android:layout_below="@+id/editText2"
+        android:layout_toLeftOf="@+id/toggleButton11"
+        android:layout_toStartOf="@+id/toggleButton11" />
+
+    <ToggleButton
+        android:text="ToggleButton"
+        android:textOff="WED"
+        android:textOn="WED"
+        android:layout_height="wrap_content"
+        android:id="@+id/toggleButton6"
+        android:layout_width="30dp"
+        android:layout_below="@+id/editText2"
+        android:layout_toLeftOf="@+id/toggleButton7"
+        android:layout_toStartOf="@+id/toggleButton7" />
+
+    <ToggleButton
+        android:text="ToggleButton"
+        android:textOff="THU"
+        android:textOn="THU"
+        android:layout_height="wrap_content"
+        android:id="@+id/toggleButton7"
+        android:layout_width="30dp"
+        android:layout_below="@+id/editText2"
+        android:layout_alignRight="@+id/editText"
+        android:layout_alignEnd="@+id/editText" />
+
+    <ToggleButton
+        android:text="ToggleButton"
+        android:textOff="TUE"
+        android:textOn="TUE"
+        android:layout_height="wrap_content"
+        android:id="@+id/toggleButton5"
+        android:layout_width="30dp"
+        android:layout_alignBaseline="@+id/toggleButton6"
+        android:layout_alignBottom="@+id/toggleButton6"
+        android:layout_toLeftOf="@+id/toggleButton6"
+        android:layout_toStartOf="@+id/toggleButton6" />
+
+    <ToggleButton
+        android:text="ToggleButton"
+        android:textOff="MON"
+        android:textOn="MON"
+        android:layout_height="wrap_content"
+        android:id="@+id/toggleButton4"
+        android:layout_width="30dp"
+        android:layout_below="@+id/editText2"
+        android:layout_toRightOf="@+id/daily"
+        android:layout_toEndOf="@+id/daily" />
+
+    <ToggleButton
+        android:text="ToggleButton"
+        android:textOff="SUN"
+        android:textOn="SUN"
+        android:layout_height="wrap_content"
+        android:id="@+id/toggleButton9"
+        android:layout_width="30dp"
+        android:layout_below="@+id/editText2"
+        android:layout_toLeftOf="@+id/fab"
+        android:layout_toStartOf="@+id/fab" />
 
     <TimePicker
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:timePickerMode="spinner"
         android:id="@+id/timePicker"
-        android:layout_below="@+id/toggleButton10"
-        android:layout_alignRight="@+id/toggleButton11"
-        android:layout_alignEnd="@+id/toggleButton11" />
+        android:layout_below="@+id/toggleButton11"
+        android:layout_centerHorizontal="true" />
 
 
 </RelativeLayout>

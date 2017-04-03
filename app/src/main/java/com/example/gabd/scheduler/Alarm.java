@@ -5,13 +5,14 @@ package com.example.gabd.scheduler;
  */
 
 public class Alarm {
-    String hour;
-    String min;
+    String time;
     String name;
+    int id;
 
-    Alarm(String name, String hour, String min) {
-        this.hour = hour;
-        this.min = min;
+    public Alarm(int id, String name, String time) {
+        this.id = id;
+        this.time = time;
         this.name = name;
     }
+
 }

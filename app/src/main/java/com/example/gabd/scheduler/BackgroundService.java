@@ -68,14 +68,9 @@ public class BackgroundService extends IntentService {
         alarm_manager = (AlarmManager) getSystemService(ALARM_SERVICE);
         final Calendar calendar = Calendar.getInstance();
         TinyDB tdb = new TinyDB(this);
-        String idlist = "idlist";
-        String hourlist = "hourlist";
-        String minutelist = "minutelist";
-        String actnames = "actnames";
-        ArrayList<Integer> listid = tdb.getListInt(idlist);
-        ArrayList<Integer> listhour = tdb.getListInt(hourlist);
-        ArrayList<Integer> listmin = tdb.getListInt(minutelist);
-        ArrayList<String> activitynames = tdb.getListString(actnames);
+        String listalarm = "alarmlist";
+        ArrayList<Object> alarmlist = new ArrayList<Object>();
+        alarmlist = tdb.getListObject(listalarm, Alarm.class);
 
 
         Intent myIntent = new Intent(this, AlarmReceiver.class);
@@ -84,32 +79,36 @@ public class BackgroundService extends IntentService {
         String str_min = intent.getStringExtra("MINUTE");
         String str_hour = intent.getStringExtra("HOUR");
         String act_name = intent.getStringExtra("NAME");
+        String interval = intent.getStringExtra("INTERVAL");
         Log.e("BackgroundService", ""+intent.getStringExtra("NAME"));
 
         int minute;
         minute = Integer.parseInt(str_min);
         int hour = Integer.parseInt(str_hour);
+        int intval = new Integer(0);
+        if (interval.equalsIgnoreCase("daily")) { intval = (int) AlarmManager.INTERVAL_DAY; }
+        if (interval.equalsIgnoreCase("weekly")) {
+            intval = (int) AlarmManager.INTERVAL_DAY;
+            intval = intval*7;
+        }
+        if (interval.equalsIgnoreCase("hourly")) { intval = (int) AlarmManager.INTERVAL_HOUR; }
 
         calendar.set(Calendar.HOUR_OF_DAY, hour);
         calendar.set(Calendar.MINUTE, minute);
 
 
         if (minute < 10) str_min = "0" + String.valueOf(minute);
-        if (hour > 12) str_hour = String.valueOf(hour - 12);
+
+        String time = new String();
+        time = str_hour + ":" + str_min;
 
         //editor = sharedPref.edit();
         final int _id = (int)calendar.getTimeInMillis();
-        listid.add(_id);
-        listhour.add(hour);
-        listmin.add(minute);
-        activitynames.add(act_name);
-        tdb.putListInt(idlist, listid);
-        tdb.putListInt(hourlist, listhour);
-        tdb.putListInt(minutelist, listmin);
-        tdb.putListString(actnames, activitynames);
+        alarmlist.add(new Alarm(_id, act_name, time));
+        tdb.putListObject(listalarm, alarmlist);
 
         pending_intent = PendingIntent.getBroadcast(BackgroundService.this, _id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        alarm_manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pending_intent);
+        alarm_manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), intval, pending_intent);
     }
 }

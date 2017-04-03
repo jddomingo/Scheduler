@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
 public class ListActivity extends Activity {
     private RecyclerView recView;
     private List<Alarm> alarms;
+    TinyDB tdb;
 
 
     @Override
@@ -32,9 +34,11 @@ public class ListActivity extends Activity {
 
     private void initializeData(){
         alarms = new ArrayList<>();
-        alarms.add(new Alarm("Running", "12:47", " "));
-        alarms.add(new Alarm("Baking", "2:32", " "));
-        alarms.add(new Alarm("Running", "3:26", " "));
+        tdb = new TinyDB(this);
+        ArrayList<Object> alarmlist = tdb.getListObject("alarmlist", Alarm.class);
+        for (int i = 0; i < alarmlist.size(); i++) {
+            alarms.add((Alarm) alarmlist.get(i));
+        }
     }
 
     private void initializeAdapter(){

@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.text.Editable;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -21,7 +22,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.ToggleButton;
+
+import org.w3c.dom.Text;
 
 import java.util.Calendar;
 
@@ -30,10 +37,14 @@ public class SchedulePage extends AppCompatActivity
     AlarmManager alarm_manager;
     private PendingIntent pending_intent;
     private TimePicker time_picker;
+    private EditText edit_text;
+    private ToggleButton daily;
+    private ToggleButton hourly;
+    private ToggleButton weekly;
     private static SchedulePage inst;
     private AlarmReceiver alarm;
     private Context context;
-
+    TinyDB tdb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,18 +69,58 @@ public class SchedulePage extends AppCompatActivity
 
         final Bundle bundle = new Bundle();
 
+        daily = (ToggleButton) findViewById(R.id.daily);
+        weekly = (ToggleButton) findViewById(R.id.weekly);
+        hourly = (ToggleButton) findViewById(R.id.hourly);
+        daily.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    weekly.setChecked(false);
+                    hourly.setChecked(false);
+                }
+            }
+        });
+        weekly.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    daily.setChecked(false);
+                    hourly.setChecked(false);
+                }
+            }
+        });
+        hourly.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    daily.setChecked(false);
+                    weekly.setChecked(false);
+                }
+            }
+        });
+
         Button alarm_start = (Button) findViewById(R.id.fab);
         alarm_start.setOnClickListener(new View.OnClickListener() {
             @TargetApi(Build.VERSION_CODES.M)
             @Override
             public void onClick(View v) {
                 time_picker = (TimePicker) findViewById(R.id.timePicker);
+                edit_text = (EditText) findViewById(R.id.editText);
 
                 final int hour = time_picker.getHour();
                 final int minute = time_picker.getMinute();
+                final Editable act_name = edit_text.getText();
+                String interval = new String();
+                if (daily.isChecked()) { interval = "daily"; }
+                if (weekly.isChecked()) { interval = "weekly"; }
+                if (hourly.isChecked()) { interval = "hourly"; }
+
 
                 bundle.putString("HOUR", String.valueOf(hour));
                 bundle.putString("MINUTE", String.valueOf(minute));
+                bundle.putString("NAME", String.valueOf(act_name));
+                bundle.putString("INTERVAL", interval);
                 myIntent.putExtras(bundle);
 
                 startService(myIntent);

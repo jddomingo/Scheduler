@@ -26,6 +26,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import org.w3c.dom.Text;
@@ -124,6 +125,8 @@ public class SchedulePage extends AppCompatActivity
                 myIntent.putExtras(bundle);
 
                 startService(myIntent);
+
+                Toast.makeText(v.getContext(), "Alarm added!", Toast.LENGTH_SHORT).show();
 
             }
         });

@@ -15,4 +15,8 @@ public class Alarm {
         this.name = name;
     }
 
+    public int getId () {
+        return id;
+    }
+
 }

@@ -30,8 +30,6 @@ public class BackgroundService extends IntentService {
     private AlarmReceiver alarm;
     private Context context;
     TinyDB tdb;
-    public static final String MyPREFERENCES = "alarmspref";
-    SharedPreferences sharedpreferences;
     /**
     SharedPreferences sharedPref = context.getSharedPreferences(
             getString(R.string.pref_file_key), Context.MODE_PRIVATE

@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.IBinder;
@@ -41,6 +42,7 @@ public class RingtonePlayingService extends Service{
         PendingIntent pending_intent = PendingIntent.getActivity(this, 0, i_1, 0);
 
         media_player = MediaPlayer.create(this, R.raw.daydreamw);
+        media_player.setAudioStreamType(AudioManager.STREAM_MUSIC);
         media_player.start();
 
         return START_NOT_STICKY;

@@ -3,6 +3,7 @@ import com.example.gabd.scheduler.Alarm;
 import com.github.brnunes.swipeablerecyclerview.SwipeableRecyclerViewTouchListener;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -19,6 +20,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +28,8 @@ import java.util.List;
 public class ListActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     private RecyclerView recView;
     private List<Alarm> alarms;
+    AlarmManager alarm_manager;
     TinyDB tdb;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,13 +71,12 @@ public class ListActivity extends AppCompatActivity implements NavigationView.On
     private void initializeAdapter(){
         final MyAdapter adapter = new MyAdapter(alarms);
         recView.setAdapter(adapter);
-
+        alarm_manager = (AlarmManager) getSystemService(ALARM_SERVICE);
         SwipeableRecyclerViewTouchListener swipeTouchListener =
                 new SwipeableRecyclerViewTouchListener(recView,
                         new SwipeableRecyclerViewTouchListener.SwipeListener() {
                             PendingIntent pending_intent;
                             ArrayList<Object> alarmlist = tdb.getListObject("alarmlist", Alarm.class);
-                            @Override
                             public boolean canSwipe(int position) {
                                 return true;
                             }
@@ -95,9 +96,11 @@ public class ListActivity extends AppCompatActivity implements NavigationView.On
                                 for (int position : reverseSortedPositions) {
                                     alarms.remove(position);
                                     Alarm delete_alarm = (Alarm) alarmlist.get(position);
-                                    Intent myIntent = new Intent(recView.getContext(), AlarmReceiver.class);
-                                    myIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    pending_intent = PendingIntent.getBroadcast(recView.getContext(), delete_alarm.getId(), myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                                    Intent myIntent = new Intent(ListActivity.this, AlarmReceiver.class);
+                                    pending_intent = PendingIntent.getBroadcast(ListActivity.this, (int)delete_alarm.getId(), myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                                    Log.e("swipe", String.valueOf((int)delete_alarm.getId()));
+                                    pending_intent.cancel();
+                                    alarm_manager.cancel(pending_intent);
                                     alarmlist.remove(position);
                                     tdb.putListObject("alarmlist", alarmlist);
                                     adapter.notifyItemRemoved(position);
@@ -110,9 +113,10 @@ public class ListActivity extends AppCompatActivity implements NavigationView.On
                                 for (int position : reverseSortedPositions) {
                                     alarms.remove(position);
                                     Alarm delete_alarm = (Alarm) alarmlist.get(position);
-                                    Intent myIntent = new Intent(recView.getContext(), AlarmReceiver.class);
-                                    myIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    pending_intent = PendingIntent.getBroadcast(recView.getContext(), delete_alarm.getId(), myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                                    Intent myIntent = new Intent(ListActivity.this, AlarmReceiver.class);
+                                    pending_intent = PendingIntent.getBroadcast(ListActivity.this, (int)delete_alarm.getId(), myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                                    Log.e("swipe", String.valueOf((int)delete_alarm.getId()));
+                                    pending_intent.cancel();
                                     alarmlist.remove(position);
                                     tdb.putListObject("alarmlist", alarmlist);
                                     adapter.notifyItemRemoved(position);

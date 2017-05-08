@@ -3,6 +3,8 @@
     package="com.example.gabd.scheduler">
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -21,6 +23,7 @@
         </activity>
         <uses-permission android:name="android.permission.BLUETOOTH" />
         <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+        <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
         <activity
             android:name=".Achievements"
             android:label="@string/title_activity_home_page"
@@ -35,6 +38,9 @@
         <activity
             android:name=".SchedulePage"
             android:label="@string/title_activity_schedule_page"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ConfirmActivity"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <receiver android:name=".AlarmReceiver" />

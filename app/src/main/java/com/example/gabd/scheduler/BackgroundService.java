@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TimePicker;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -113,9 +114,12 @@ public class BackgroundService extends IntentService {
         final int _id = (int)calendar.getTimeInMillis();
         Log.e("ayy", String.valueOf(_id));
         Log.e("aww", String.valueOf((int)calendar.getTimeInMillis()));
-        alarmlist.add(new Alarm(_id, act_name, time,valinter, 0 ,0));
+        Alarm newalarm  = new Alarm(_id, act_name, time,valinter, 0 ,0);
+        alarmlist.add(newalarm);
         tdb.putListObject(listalarm, alarmlist);
         myIntent.putExtra("name", act_name);
+        newalarm = (Alarm) alarmlist.get(alarmlist.size()-1);
+        myIntent.putExtra("alarm", newalarm);
 
         pending_intent = PendingIntent.getBroadcast(BackgroundService.this, _id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 

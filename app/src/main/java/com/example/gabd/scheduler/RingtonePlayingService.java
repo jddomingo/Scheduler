@@ -43,33 +43,15 @@ public class RingtonePlayingService extends Service{
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public int onStartCommand(Intent intent, int flags, int sid){
-        final NotificationManager not_man = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        miBand = new MiBand(this);
-        Object[] devices = BluetoothAdapter.getDefaultAdapter().getBondedDevices().toArray();
-        final BluetoothDevice device = (BluetoothDevice) devices[0];
-
-        miBand.connect(device, new ActionCallback() {
-            @Override
-            public void onSuccess(Object data) {
-                Toast.makeText(RingtonePlayingService.this, "Connected", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onFail(int errorCode, String msg) {
-
-            }
-        });
-
-        miBand.startVibration(VibrationMode.VIBRATION_WITH_LED);
 
         Log.e("RingTone", "we here");
 
         Intent i_1 = new Intent(this.getApplicationContext(), BackgroundService.class);
         PendingIntent pending_intent = PendingIntent.getActivity(this, 0, i_1, 0);
 
-        /*media_player = MediaPlayer.create(this, R.raw.daydreamw);
+        media_player = MediaPlayer.create(this, R.raw.daydreamw);
         media_player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        media_player.start();*/
+        media_player.start();
 
         return START_NOT_STICKY;
     }

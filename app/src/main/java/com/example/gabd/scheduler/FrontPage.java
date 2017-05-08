@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -22,9 +23,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.zhaoxiaodan.miband.ActionCallback;
 import com.zhaoxiaodan.miband.MiBand;
+import com.zhaoxiaodan.miband.listeners.NotifyListener;
 import com.zhaoxiaodan.miband.model.VibrationMode;
 
 import java.io.File;
@@ -37,6 +40,9 @@ import java.util.regex.Pattern;
 public class FrontPage extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private MiBand miband;
+    private BluetoothGatt gatt;
+    private int connected = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,19 +69,26 @@ public class FrontPage extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        Object[] devices = BluetoothAdapter.getDefaultAdapter().getBondedDevices().toArray();
-        final BluetoothDevice device = (BluetoothDevice) devices[0];
         miband = new MiBand(this);
-        Button mi_connect = (Button) findViewById(R.id.button2);
+        final Button mi_connect = (Button) findViewById(R.id.button2);
         Button start = (Button) findViewById(R.id.start);
         Button export = (Button) findViewById(R.id.export);
         mi_connect.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(final View v) {
+                Object[] devices = BluetoothAdapter.getDefaultAdapter().getBondedDevices().toArray();
+                final BluetoothDevice device = (BluetoothDevice) devices[0];
+                miband = new MiBand(v.getContext());
+
+                if (connected == 0) {
+                    connected = 1;
+                    mi_connect.setText("Disconnect mi band");
                     miband.connect(device, new ActionCallback() {
                         @Override
                         public void onSuccess(Object data) {
-                            Log.d("FPage", "Connected with Mi Band!");
+                            Log.d("FPage", "Connected with Mi Band!" + device.getAddress() + device.getName()
+                                    + String.valueOf(device.getType())
+                                    + String.valueOf(device.getClass()));
                             //show SnackBar/Toast or something
                         }
 
@@ -84,12 +97,19 @@ public class FrontPage extends AppCompatActivity
                             Log.d("Fpage", "Connection failed: " + msg);
                         }
                     });
+                } else {
+                    connected = 0;
+                    miband = null;
+                    mi_connect.setText("connect mi band");
+                }
             }
         });
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                miband.startVibration(VibrationMode.VIBRATION_WITHOUT_LED);
+                if (miband != null) {
+                    miband.startVibration(VibrationMode.VIBRATION_WITHOUT_LED);
+                }
             }
         });
         export.setOnClickListener(new View.OnClickListener() {
@@ -113,12 +133,14 @@ public class FrontPage extends AppCompatActivity
                         test = entry.getValue().toString();
                         array = test.split("‚‗‚");
                     }
-                    pw.println("Interval,Name,Time");
+                    pw.println("Interval,Name,Time,Count");
                     for (int i = 0; i < array.length; i++) {
                         arr2 = array[i].split(":");
-                        for (int j = 2; j < arr2.length-2; j++) {
-                            arr3 = arr2[j].split(",");
-                            pw.print(arr3[0] + ",");
+                        for (int j = 1; j < arr2.length-2; j++) {
+                            if (j != 3) {
+                                arr3 = arr2[j].split(",");
+                                pw.print(arr3[0] + ",");
+                            }
                         }
                         arr3 = arr2[arr2.length-2].split(",");
                         pw.print(arr3[0].replaceAll("\\}", "") + ":");
@@ -134,9 +156,14 @@ public class FrontPage extends AppCompatActivity
         });
     }// Storage Permissions
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static final int ACCESS_LOCATION = 1;
+    private static String[] ACCESS_STORATE = {
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+    };
     private static String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
     };
 
     /**
@@ -156,6 +183,11 @@ public class FrontPage extends AppCompatActivity
                     activity,
                     PERMISSIONS_STORAGE,
                     REQUEST_EXTERNAL_STORAGE
+            );
+            ActivityCompat.requestPermissions(
+                    activity,
+                    ACCESS_STORATE,
+                    ACCESS_LOCATION
             );
         }
     }

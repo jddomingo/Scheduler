@@ -43,7 +43,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.AlarmViewHolder> {
             alarmtime = (TextView) itemView.findViewById(R.id.alarm_hour);
             view = itemView;
             TinyDB tdb = new TinyDB(view.getContext());
-            List<Integer> idlist = tdb.getListInt("idlist");
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {

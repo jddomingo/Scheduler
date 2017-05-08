@@ -7,11 +7,11 @@ import java.io.Serializable;
  */
 @SuppressWarnings("serial")
 public class Alarm implements Serializable{
+    int alarmcount;
+    int donecount;
     String time;
     String name;
     String interval;
-    int donecount;
-    int alarmcount;
     int id;
 
     public Alarm(int id, String name, String time, String interval, int donecount, int alarmcount) {
@@ -22,6 +22,8 @@ public class Alarm implements Serializable{
         this.donecount = donecount;
         this.alarmcount = alarmcount;
     }
+
+
 
     public int getId () {
         return id;

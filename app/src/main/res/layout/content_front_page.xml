@@ -19,7 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Mi Band Scheduler"
+        android:text="Mi Alarm"
         android:textSize="30dp"
         android:textStyle="bold"
         android:id="@+id/textView2"
@@ -32,16 +32,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/button2"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
-
-    <Button
-        android:text="start"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/button2"
-        android:layout_alignStart="@+id/textView2"
-        android:layout_marginTop="14dp"
-        android:id="@+id/start" />
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:gravity="center"/>
 
     <Button
         android:text="export"
@@ -50,6 +43,16 @@
         android:id="@+id/export"
         android:layout_alignBaseline="@+id/start"
         android:layout_alignBottom="@+id/start"
-        android:layout_alignEnd="@+id/textView2" />
+        android:layout_toEndOf="@+id/textView2" />
+
+    <Button
+        android:text="start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="11dp"
+        android:id="@+id/start"
+        android:layout_below="@+id/button2"
+        android:layout_toStartOf="@+id/textView2" />
+
 
 </RelativeLayout>

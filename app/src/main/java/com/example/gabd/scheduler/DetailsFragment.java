@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class DetailsFragment extends DialogFragment {
         }
 
         tdb.remove("curralarm");
-        return new AlertDialog.Builder(getActivity())
+        AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
                 .setTitle("Activity Details")
                 .setMessage("Pending Activity!")
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -67,5 +68,6 @@ public class DetailsFragment extends DialogFragment {
                         getActivity().startActivity(frontPageIntent);
                     }
                 }).create();
+        return alertDialog;
     }
 }

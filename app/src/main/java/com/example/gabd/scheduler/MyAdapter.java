@@ -34,6 +34,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.AlarmViewHolder> {
         CardView cv;
         TextView alarmname;
         TextView alarmtime;
+        TextView alarminterval;
+        TextView alarmcount;
         String name = "test";
 
         public AlarmViewHolder(View itemView) {
@@ -41,6 +43,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.AlarmViewHolder> {
             cv = (CardView) itemView.findViewById(R.id.cv);
             alarmname = (TextView) itemView.findViewById(R.id.alarm_name);
             alarmtime = (TextView) itemView.findViewById(R.id.alarm_hour);
+            alarminterval = (TextView) itemView.findViewById(R.id.alarm_interval);
+            alarmcount = (TextView) itemView.findViewById(R.id.alarm_count);
             view = itemView;
             TinyDB tdb = new TinyDB(view.getContext());
             view.setOnClickListener(new View.OnClickListener() {
@@ -91,6 +95,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.AlarmViewHolder> {
     public void onBindViewHolder(AlarmViewHolder holder, int position) {
         holder.alarmname.setText(alarms.get(position).name);
         holder.alarmtime.setText(alarms.get(position).time);
+        holder.alarminterval.setText(alarms.get(position).interval);
+        holder.alarmcount.setText(String.valueOf(alarms.get(position).getDonecount()) + "/"  + String.valueOf(alarms.get(position).getAlarmcount()));
     }
 
     @Override

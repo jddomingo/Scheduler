@@ -49,7 +49,7 @@ public class RingtonePlayingService extends Service{
         Intent i_1 = new Intent(this.getApplicationContext(), BackgroundService.class);
         PendingIntent pending_intent = PendingIntent.getActivity(this, 0, i_1, 0);
 
-        media_player = MediaPlayer.create(this, R.raw.daydreamw);
+        media_player = MediaPlayer.create(this, R.raw.alarm);
         media_player.setAudioStreamType(AudioManager.STREAM_MUSIC);
         media_player.start();
 

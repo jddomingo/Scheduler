@@ -5,11 +5,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.example.gabd.scheduler.SchedulePage">
+    tools:context="com.example.gabd.scheduler.SchedulePage"
+    android:background="@drawable/addgrad">
+
+    <include layout="@layout/nav_buttons"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:id="@id/drawer_layout"/>
+
 
     <Button
         android:id="@+id/fab"
         android:text ="Add Alarm"
+        android:textColor="#ffffff"
         android:layout_width="200dp"
         android:layout_gravity="top|center_horizontal"
         app:layout_anchorGravity="bottom|center_horizontal"
@@ -18,48 +26,21 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
 
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay"
-        android:id="@+id/appBarLayout">
-
-    </android.support.design.widget.AppBarLayout>
-
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorPrimary"
-        app:popupTheme="@style/AppTheme.PopupOverlay"
-        android:layout_below="@+id/appBarLayout"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
         android:ems="10"
-        android:layout_below="@+id/toolbar"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:layout_marginLeft="12dp"
         android:layout_marginStart="12dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="45dp"
         android:id="@+id/editText"
-        tools:text="Activity Name" />
+        android:imeOptions="actionDone"
+        tools:text="Activity Name"
+        android:layout_below="@+id/drawer_layout"
+        android:layout_alignParentStart="true"
+        android:visibility="visible"/>
 
-    <ToggleButton
-        android:text="ToggleButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/daily"
-        android:layout_below="@+id/editText"
-        android:layout_alignLeft="@+id/editText"
-        android:layout_alignStart="@+id/editText"
-        android:textOff="DAILY"
-        android:textOn="DAILY"/>
 
 
     <TimePicker
@@ -67,126 +48,53 @@
         android:layout_height="wrap_content"
         android:timePickerMode="spinner"
         android:id="@+id/timePicker"
-        android:layout_below="@+id/toggleButton11"
+        android:layout_marginTop="16dp"
+        android:layout_below="@+id/editText"
         android:layout_centerHorizontal="true" />
 
-    <TextView
+    <com.example.gabd.scheduler.MultiSpinner
+        android:id="@+id/multispinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:text="On these days"
-        android:ems="10"
-        android:id="@+id/editText2"
-        android:layout_below="@+id/daily"
-        android:layout_alignLeft="@+id/daily"
-        android:layout_alignStart="@+id/daily" />
+        android:entries="@array/day_values"
+        android:layout_below="@+id/timePicker"
+        android:layout_alignEnd="@+id/timePicker"
+        android:layout_alignStart="@+id/timePicker" />
 
-    <ToggleButton
-        android:text="ToggleButton"
-        android:textOff="SAT"
-        android:textOn="SAT"
-        android:layout_height="wrap_content"
-        android:id="@+id/toggleButton11"
-        android:layout_width="30dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginStart="15dp"
-        android:layout_alignBaseline="@+id/toggleButton10"
-        android:layout_alignBottom="@+id/toggleButton10"
-        android:layout_toRightOf="@+id/timePicker"
-        android:layout_toEndOf="@+id/timePicker" />
-
-    <ToggleButton
-        android:text="ToggleButton"
-        android:textOff="FRI"
-        android:textOn="FRI"
-        android:layout_height="wrap_content"
-        android:id="@+id/toggleButton10"
-        android:layout_width="30dp"
-        android:layout_alignBaseline="@+id/toggleButton6"
-        android:layout_alignBottom="@+id/toggleButton6"
-        android:layout_alignRight="@+id/timePicker"
-        android:layout_alignEnd="@+id/timePicker" />
-
-    <ToggleButton
-        android:text="ToggleButton"
-        android:textOff="THU"
-        android:textOn="THU"
-        android:layout_height="wrap_content"
-        android:id="@+id/toggleButton7"
-        android:layout_width="30dp"
-        android:layout_above="@+id/timePicker"
-        android:layout_toLeftOf="@+id/toggleButton10"
-        android:layout_toStartOf="@+id/toggleButton10"
-        android:layout_marginRight="15dp"
-        android:layout_marginEnd="15dp" />
-
-    <ToggleButton
-        android:text="ToggleButton"
-        android:textOff="WED"
-        android:textOn="WED"
-        android:layout_height="wrap_content"
-        android:id="@+id/toggleButton6"
-        android:layout_width="30dp"
-        android:layout_below="@+id/editText2"
-        android:layout_alignRight="@+id/editText"
-        android:layout_alignEnd="@+id/editText" />
-
-    <ToggleButton
-        android:text="ToggleButton"
-        android:textOff="TUE"
-        android:textOn="TUE"
-        android:layout_height="wrap_content"
-        android:id="@+id/toggleButton5"
-        android:layout_width="30dp"
-        android:layout_below="@+id/editText2"
-        android:layout_alignRight="@+id/editText2"
-        android:layout_alignEnd="@+id/editText2" />
-
-    <ToggleButton
-        android:text="ToggleButton"
-        android:textOff="MON"
-        android:textOn="MON"
-        android:layout_height="wrap_content"
-        android:id="@+id/toggleButton4"
-        android:layout_width="30dp"
-        android:layout_below="@+id/editText2"
-        android:layout_toRightOf="@+id/daily"
-        android:layout_toEndOf="@+id/daily" />
-
-    <ToggleButton
-        android:text="ToggleButton"
-        android:textOff="SUN"
-        android:textOn="SUN"
-        android:layout_height="wrap_content"
-        android:id="@+id/toggleButton9"
-        android:layout_width="30dp"
-        android:layout_below="@+id/editText2"
-        android:layout_toLeftOf="@+id/fab"
-        android:layout_toStartOf="@+id/fab"
-        android:layout_marginRight="15dp"
-        android:layout_marginEnd="15dp" />
-
-    <ToggleButton
-        android:text="ToggleButton"
+    <RadioButton
+        android:text="Hourly"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/hourly"
-        android:textOff="HOURLY"
-        android:textOn="HOURLY"
-        android:layout_below="@+id/editText"
-        android:layout_alignRight="@+id/toggleButton11"
-        android:layout_alignEnd="@+id/toggleButton11" />
+        android:layout_below="@+id/multispinner"
+        android:layout_alignStart="@+id/editText"
+        android:layout_marginTop="15dp" />
 
-    <ToggleButton
-        android:text="ToggleButton"
+    <RadioButton
+        android:text="Daily"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/weekly"
-        android:textOff="WEEKLY"
-        android:textOn="WEEKLY"
-        android:layout_below="@+id/editText"
-        android:layout_alignLeft="@+id/toggleButton5"
-        android:layout_alignStart="@+id/toggleButton5" />
+        android:layout_alignTop="@+id/hourly"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/daily" />
 
+    <RadioButton
+        android:text="Weekly"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/daily"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="13dp"
+        android:id="@+id/weekly" />
+
+    <RadioButton
+        android:text="Once"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:gravity="center"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/once"
+        android:layout_below="@+id/daily"/>
 
 </RelativeLayout>

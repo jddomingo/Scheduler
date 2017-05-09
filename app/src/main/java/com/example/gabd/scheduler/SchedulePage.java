@@ -24,6 +24,8 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -33,15 +35,16 @@ import org.w3c.dom.Text;
 
 import java.util.Calendar;
 
-public class SchedulePage extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class SchedulePage extends AppCompatActivity {
     AlarmManager alarm_manager;
     private PendingIntent pending_intent;
     private TimePicker time_picker;
     private EditText edit_text;
-    private ToggleButton daily;
-    private ToggleButton hourly;
-    private ToggleButton weekly;
+    private RadioButton daily;
+    private RadioButton hourly;
+    private RadioButton weekly;
+    private RadioButton once;
+    private MultiSpinner multiSpinner;
     private static SchedulePage inst;
     private AlarmReceiver alarm;
     private Context context;
@@ -51,15 +54,7 @@ public class SchedulePage extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.nav_bar_schedule);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
+        onNavigationButtonSelect();
 
 
         this.context = this;
@@ -70,15 +65,20 @@ public class SchedulePage extends AppCompatActivity
 
         final Bundle bundle = new Bundle();
 
-        daily = (ToggleButton) findViewById(R.id.daily);
-        weekly = (ToggleButton) findViewById(R.id.weekly);
-        hourly = (ToggleButton) findViewById(R.id.hourly);
+        multiSpinner = (MultiSpinner) findViewById(R.id.multispinner);
+        Log.e("Spinner", String.valueOf(multiSpinner.getSelectedItem()));
+
+        daily = (RadioButton) findViewById(R.id.daily);
+        weekly = (RadioButton) findViewById(R.id.weekly);
+        hourly = (RadioButton) findViewById(R.id.hourly);
+        once = (RadioButton) findViewById(R.id.once);
         daily.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     weekly.setChecked(false);
                     hourly.setChecked(false);
+                    once.setChecked(false);
                 }
             }
         });
@@ -88,6 +88,7 @@ public class SchedulePage extends AppCompatActivity
                 if (isChecked) {
                     daily.setChecked(false);
                     hourly.setChecked(false);
+                    once.setChecked(false);
                 }
             }
         });
@@ -97,22 +98,35 @@ public class SchedulePage extends AppCompatActivity
                 if (isChecked) {
                     daily.setChecked(false);
                     weekly.setChecked(false);
+                    once.setChecked(false);
+                }
+            }
+        });
+        once.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    daily.setChecked(false);
+                    weekly.setChecked(false);
+                    hourly.setChecked(false);
                 }
             }
         });
 
         Button alarm_start = (Button) findViewById(R.id.fab);
+        edit_text = (EditText) findViewById(R.id.editText);
+        edit_text.bringToFront();
         alarm_start.setOnClickListener(new View.OnClickListener() {
             @TargetApi(Build.VERSION_CODES.M)
             @Override
             public void onClick(View v) {
                 time_picker = (TimePicker) findViewById(R.id.timePicker);
-                edit_text = (EditText) findViewById(R.id.editText);
+
 
                 final int hour = time_picker.getHour();
                 final int minute = time_picker.getMinute();
                 final Editable act_name = edit_text.getText();
-                String interval = new String();
+                String interval = new String("once");
                 if (daily.isChecked()) { interval = "daily"; }
                 if (weekly.isChecked()) { interval = "weekly"; }
                 if (hourly.isChecked()) { interval = "hourly"; }
@@ -131,63 +145,34 @@ public class SchedulePage extends AppCompatActivity
             }
         });
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
     }
 
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.activity_schedule_page, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-        if (id == R.id.nav_star) {
-            Intent intent = new Intent(this, Achievements.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_today) {
-            Intent intent = new Intent(this, SchedulePage.class);
-            startActivity(intent);
-        } else if (id == R.id.list) {
-            Intent intent = new Intent(this, ListActivity.class);
-            startActivity(intent);
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
+    private void onNavigationButtonSelect() {
+        ImageButton add = (ImageButton) findViewById(R.id.addalarm);
+        ImageButton home = (ImageButton) findViewById(R.id.home);
+        ImageButton list = (ImageButton) findViewById(R.id.listsched);
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), SchedulePage.class);
+                startActivity(intent);
+            }
+        });
+        home.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), FrontPage.class);
+                startActivity(intent);
+            }
+        });
+        list.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), ListActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
 }

@@ -21,4 +21,5 @@ public class ConfirmActivity extends Activity {
         DetailsFragment details = new DetailsFragment();
         details.show(fm, "Activity Confirmation");
     }
+
 }

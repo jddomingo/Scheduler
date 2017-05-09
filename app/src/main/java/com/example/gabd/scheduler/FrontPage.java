@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
@@ -23,6 +24,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.zhaoxiaodan.miband.ActionCallback;
@@ -37,10 +39,9 @@ import java.io.PrintWriter;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-public class FrontPage extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class FrontPage extends AppCompatActivity {
     private MiBand miband;
-    private BluetoothGatt gatt;
+    private BluetoothAdapter mBA;
     private int connected = 0;
 
 
@@ -48,59 +49,47 @@ public class FrontPage extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.front_page);
+        onNavigationButtonSelect();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         final TinyDB tdb = new TinyDB(this);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
         miband = new MiBand(this);
         final Button mi_connect = (Button) findViewById(R.id.button2);
         Button start = (Button) findViewById(R.id.start);
         Button export = (Button) findViewById(R.id.export);
+        mBA = BluetoothAdapter.getDefaultAdapter();
         mi_connect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                Object[] devices = BluetoothAdapter.getDefaultAdapter().getBondedDevices().toArray();
-                final BluetoothDevice device = (BluetoothDevice) devices[0];
-                miband = new MiBand(v.getContext());
+                if(mBA.isEnabled()) {
+                    Object[] devices = BluetoothAdapter.getDefaultAdapter().getBondedDevices().toArray();
+                    final BluetoothDevice device = (BluetoothDevice) devices[0];
+                    miband = new MiBand(v.getContext());
 
-                if (connected == 0) {
-                    connected = 1;
-                    mi_connect.setText("Disconnect mi band");
-                    miband.connect(device, new ActionCallback() {
-                        @Override
-                        public void onSuccess(Object data) {
-                            Log.d("FPage", "Connected with Mi Band!" + device.getAddress() + device.getName()
-                                    + String.valueOf(device.getType())
-                                    + String.valueOf(device.getClass()));
-                            //show SnackBar/Toast or something
-                        }
+                    if (connected == 0) {
+                        connected = 1;
+                        mi_connect.setText("Disconnect mi band");
+                        miband.connect(device, new ActionCallback() {
+                            @Override
+                            public void onSuccess(Object data) {
+                                Log.d("FPage", "Connected with Mi Band!" + device.getAddress() + device.getName()
+                                        + String.valueOf(device.getType())
+                                        + String.valueOf(device.getClass()));
+                                //show SnackBar/Toast or something
+                            }
 
-                        @Override
-                        public void onFail(int errorCode, String msg) {
-                            Log.d("Fpage", "Connection failed: " + msg);
-                        }
-                    });
+                            @Override
+                            public void onFail(int errorCode, String msg) {
+                                Log.d("Fpage", "Connection failed: " + msg);
+                            }
+                        });
+                    } else {
+                        connected = 0;
+                        miband = null;
+                        mi_connect.setText("connect mi band");
+                    }
                 } else {
-                    connected = 0;
-                    miband = null;
-                    mi_connect.setText("connect mi band");
+                    Toast.makeText(v.getContext(), "Turn on Bluetooth!" , Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -133,14 +122,16 @@ public class FrontPage extends AppCompatActivity
                         test = entry.getValue().toString();
                         array = test.split("‚‗‚");
                     }
-                    pw.println("Interval,Name,Time,Count");
+                    pw.println("Count,Interval,Name,Time");
                     for (int i = 0; i < array.length; i++) {
                         arr2 = array[i].split(":");
-                        for (int j = 1; j < arr2.length-2; j++) {
-                            if (j != 3) {
-                                arr3 = arr2[j].split(",");
-                                pw.print(arr3[0] + ",");
-                            }
+                        arr3 = arr2[2].split(",");
+                        pw.print(arr3[0] + "/");
+                        arr3 = arr2[1].split(",");
+                        pw.print(arr3[0] + ",");
+                        for (int j = 4; j < arr2.length-2; j++) {
+                            arr3 = arr2[j].split(",");
+                            pw.print(arr3[0] + ",");
                         }
                         arr3 = arr2[arr2.length-2].split(",");
                         pw.print(arr3[0].replaceAll("\\}", "") + ":");
@@ -155,6 +146,35 @@ public class FrontPage extends AppCompatActivity
             }
         });
     }// Storage Permissions
+
+    private void onNavigationButtonSelect() {
+        ImageButton add = (ImageButton) findViewById(R.id.addalarm);
+        ImageButton home = (ImageButton) findViewById(R.id.home);
+        ImageButton list = (ImageButton) findViewById(R.id.listsched);
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), SchedulePage.class);
+                startActivity(intent);
+            }
+        });
+        home.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), FrontPage.class);
+                startActivity(intent);
+            }
+        });
+        list.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), ListActivity.class);
+                startActivity(intent);
+
+            }
+        });
+    }
+
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static final int ACCESS_LOCATION = 1;
     private static String[] ACCESS_STORATE = {
@@ -192,58 +212,4 @@ public class FrontPage extends AppCompatActivity
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.front_page, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-        if (id == R.id.nav_star) {
-            Intent intent = new Intent(this, Achievements.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_today) {
-            Intent intent = new Intent(this, SchedulePage.class);
-            startActivity(intent);
-        } else if (id == R.id.list) {
-            Intent intent = new Intent(this, ListActivity.class);
-            startActivity(intent);
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
 }

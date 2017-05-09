@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Mi Band Scheduler</string>
+    <string name="app_name">Mi Alarm</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -54,16 +54,23 @@
         <item>-1</item>
     </string-array>
 
-    <string-array name="list_preference_entries">
-        <item>Entry 1</item>
-        <item>Entry 2</item>
-        <item>Entry 3</item>
+    <string-array name="interval_values">
+        <item>Weekly</item>
+        <item>Hourly</item>
+        <item>Daily</item>
     </string-array>
 
-    <string-array name="list_preference_entry_values">
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
+    <string name="chooseint">Choose Interval...</string>
+    <string name="choosedays">Choose Days...</string>
+
+    <string-array name="day_values">
+        <item>Mon</item>
+        <item>Tue</item>
+        <item>Wed</item>
+        <item>Thu</item>
+        <item>Fri</item>
+        <item>Sat</item>
+        <item>Sun</item>
     </string-array>
 
     <string-array name="multi_select_list_preference_default_value" />

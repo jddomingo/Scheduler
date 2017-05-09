@@ -21,11 +21,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class ListActivity extends AppCompatActivity {
     private RecyclerView recView;
     private List<Alarm> alarms;
     AlarmManager alarm_manager;
@@ -35,14 +36,7 @@ public class ListActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.nav_header_list);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
+        onNavigationButtonSelect();
 
         tdb = new TinyDB(this);
         Intent myIntent = new Intent(this, AlarmReceiver.class);
@@ -55,8 +49,6 @@ public class ListActivity extends AppCompatActivity implements NavigationView.On
         initializeData();
         initializeAdapter();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
     }
 
 
@@ -126,33 +118,30 @@ public class ListActivity extends AppCompatActivity implements NavigationView.On
                         });
         recView.addOnItemTouchListener(swipeTouchListener);
     }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.activity_list, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.nav_star) {
-            Intent intent = new Intent(this, Achievements.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_today) {
-            Intent intent = new Intent(this, SchedulePage.class);
-            startActivity(intent);
-        } else if (id == R.id.list) {
-            Intent intent = new Intent(this, ListActivity.class);
-            startActivity(intent);
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
+    private void onNavigationButtonSelect() {
+        ImageButton add = (ImageButton) findViewById(R.id.addalarm);
+        ImageButton home = (ImageButton) findViewById(R.id.home);
+        ImageButton list = (ImageButton) findViewById(R.id.listsched);
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), SchedulePage.class);
+                startActivity(intent);
+            }
+        });
+        home.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), FrontPage.class);
+                startActivity(intent);
+            }
+        });
+        list.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), ListActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }

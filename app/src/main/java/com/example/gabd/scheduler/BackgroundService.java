@@ -87,7 +87,7 @@ public class BackgroundService extends IntentService {
         int minute;
         minute = Integer.parseInt(str_min);
         int hour = Integer.parseInt(str_hour);
-        String valinter = new String(" ");
+        String valinter = new String("Once");
         int intval = new Integer(0);
         if (interval.equalsIgnoreCase("daily")) { intval = (int) AlarmManager.INTERVAL_DAY;
             valinter = "Daily";}
@@ -103,6 +103,7 @@ public class BackgroundService extends IntentService {
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.set(Calendar.HOUR_OF_DAY, (int)hour);
         calendar.set(Calendar.MINUTE, (int)minute);
+        calendar.set(Calendar.SECOND, 0);
 
 
         if (minute < 10) str_min = "0" + String.valueOf(minute);

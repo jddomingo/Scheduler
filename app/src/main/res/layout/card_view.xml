@@ -3,56 +3,62 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@drawable/border"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="104dp"
+        android:padding="16dp"
+        android:background="#20ffffff"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/alarm_hour"
+            android:textSize="30sp"
+            android:text="awww"
+            android:layout_marginStart="11dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/alarm_name"
+            android:textSize="20sp"
+            android:text="ayy"
+            android:layout_alignParentBottom="true"
+            android:layout_alignStart="@+id/alarm_hour" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/alarm_count"
+            android:textSize="20sp"
+            android:text="ccccc"
+            android:layout_alignParentBottom="true"
+            android:layout_alignEnd="@+id/alarm_interval" />
+
+        <TextView
+            android:text="hao"
+            android:textSize="25sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/alarm_interval"
+            android:layout_alignBottom="@+id/alarm_hour"
+            android:layout_alignParentEnd="true" />
+
+    </RelativeLayout>
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/cv"
+        android:background="@drawable/listgrad"
         app:cardPreventCornerOverlap="true"
-        app:cardBackgroundColor="@color/cardview_shadow_end_color"
         >
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/alarm_name"
-                android:textSize="30sp"
-                android:layout_marginRight="41dp"
-                android:layout_marginEnd="41dp"
-                android:layout_centerVertical="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/alarm_hour"
-                android:textSize="30sp"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginLeft="12dp"
-                android:layout_marginStart="12dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/alarm_min"
-                android:textSize="30sp"
-                android:layout_marginLeft="28dp"
-                android:layout_marginStart="28dp"
-                android:layout_alignParentTop="true"
-                android:layout_toRightOf="@+id/alarm_hour"
-                android:layout_toEndOf="@+id/alarm_hour" />
-
-        </RelativeLayout>
 
     </android.support.v7.widget.CardView>
 

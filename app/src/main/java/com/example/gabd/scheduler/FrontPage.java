@@ -50,17 +50,24 @@ public class FrontPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.front_page);
         onNavigationButtonSelect();
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        final TinyDB tdb = new TinyDB(this);
-        miband = new MiBand(this);
+
+        final TinyDB tdb = new TinyDB(this); //Creates instance of alarm database
+
+        miband = new MiBand(this); //Creates instance of Mi Band
+
+        //Creates button handlers
         final Button mi_connect = (Button) findViewById(R.id.button2);
         Button start = (Button) findViewById(R.id.start);
         Button export = (Button) findViewById(R.id.export);
+
+        //Creates a Bluetooth Adapter
         mBA = BluetoothAdapter.getDefaultAdapter();
+
+        //Sets listener. Connects with Mi Band device
         mi_connect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
+                //Checks first if Bluetooth is on or is supported by device
                 if(mBA.isEnabled()) {
                     Object[] devices = BluetoothAdapter.getDefaultAdapter().getBondedDevices().toArray();
                     final BluetoothDevice device = (BluetoothDevice) devices[0];
@@ -93,6 +100,7 @@ public class FrontPage extends AppCompatActivity {
                 }
             }
         });
+        //Set listener for Mi Band search. Checks if Mi Band connection was successful by vibration
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,6 +109,8 @@ public class FrontPage extends AppCompatActivity {
                 }
             }
         });
+
+        //Generates a report and writes to a text file stored in the mobile device's external storage
         export.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -145,8 +155,12 @@ public class FrontPage extends AppCompatActivity {
                 }
             }
         });
-    }// Storage Permissions
+    }
 
+
+    /**
+     * Adds listeners to buttons. Allows navigation between screens
+     */
     private void onNavigationButtonSelect() {
         ImageButton add = (ImageButton) findViewById(R.id.addalarm);
         ImageButton home = (ImageButton) findViewById(R.id.home);
@@ -211,5 +225,4 @@ public class FrontPage extends AppCompatActivity {
             );
         }
     }
-
 }

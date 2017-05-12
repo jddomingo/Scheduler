@@ -32,35 +32,16 @@ public class BackgroundService extends IntentService {
     private AlarmReceiver alarm;
     private Context context;
     TinyDB tdb;
-    /**
-    SharedPreferences sharedPref = context.getSharedPreferences(
-            getString(R.string.pref_file_key), Context.MODE_PRIVATE
-    );
-
-    SharedPreferences.Editor editor;
-     **/
-
-    /**
-     * Creates an IntentService.  Invoked by your subclass's constructor.
-     *
-     * Used to name the worker thread, important only for debugging.
-     */
+    int minute;
     public BackgroundService() {
         super("Background");
     }
 
     /**
-     * Creates an IntentService.  Invoked by your subclass's constructor.
+     * Handles construction of alarm and sets of pending intents as alarms
      *
-     * @param name Used to name the worker thread, important only for debugging.
+     * @param intent Contains information about the alarm (e.g. name, time, interval)
      */
-
-    /**
-     * Creates an IntentService.  Invoked by your subclass's constructor.
-     *
-     * Used to name the worker thread, important only for debugging.
-     */
-
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.e("BackgroundService", "Service running");
@@ -74,17 +55,20 @@ public class BackgroundService extends IntentService {
         String test = new String(" ");
         String[] array = new String[0];
 
-
+        //Creates intent
         Intent myIntent = new Intent(this, AlarmReceiver.class);
         myIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
+        //Gets alarm info from passed intent
         String str_min = intent.getStringExtra("MINUTE");
         String str_hour = intent.getStringExtra("HOUR");
         String act_name = intent.getStringExtra("NAME");
         String interval = intent.getStringExtra("INTERVAL");
+        int[] days_array = intent.getIntArrayExtra("DAYS");
+
         Log.e("BackgroundService", ""+intent.getStringExtra("NAME"));
 
-        int minute;
+        //Gets interval of alarm
         minute = Integer.parseInt(str_min);
         int hour = Integer.parseInt(str_hour);
         String valinter = new String("Once");
@@ -99,22 +83,14 @@ public class BackgroundService extends IntentService {
         if (interval.equalsIgnoreCase("hourly")) { intval = (int) AlarmManager.INTERVAL_HOUR;
             valinter = "Hourly";}
 
-
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, (int)hour);
-        calendar.set(Calendar.MINUTE, (int)minute);
-        calendar.set(Calendar.SECOND, 0);
-
-
         if (minute < 10) str_min = "0" + String.valueOf(minute);
 
         String time = new String();
         time = str_hour + ":" + str_min;
 
-        //editor = sharedPref.edit();
         final int _id = (int)calendar.getTimeInMillis();
-        Log.e("ayy", String.valueOf(_id));
-        Log.e("aww", String.valueOf((int)calendar.getTimeInMillis()));
+
+        //Creates alarm object and is stored in a database
         Alarm newalarm  = new Alarm(_id, act_name, time,valinter, 0 ,0);
         alarmlist.add(newalarm);
         tdb.putListObject(listalarm, alarmlist);
@@ -122,8 +98,18 @@ public class BackgroundService extends IntentService {
         newalarm = (Alarm) alarmlist.get(alarmlist.size()-1);
         myIntent.putExtra("alarm", newalarm);
 
+        //Creates a pending intent called by captured by Broadcast Receivers. Contains info about which receiver it is for
         pending_intent = PendingIntent.getBroadcast(BackgroundService.this, _id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+        //Sets the calendar to the given time
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, (int)hour);
+        calendar.set(Calendar.MINUTE, (int)minute);
+        calendar.set(Calendar.SECOND, 0);
+
+        //Creates a system alarm that sends an intent to the AlarmReceiver
         alarm_manager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), intval, pending_intent);
+
+
     }
 }

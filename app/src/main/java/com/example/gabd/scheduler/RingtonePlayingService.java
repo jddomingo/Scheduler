@@ -43,7 +43,8 @@ public class RingtonePlayingService extends Service{
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public int onStartCommand(Intent intent, int flags, int sid){
-
+        final int MAX_VOLUME =  100;
+        final float volume = (float) (1 - (Math.log(MAX_VOLUME - 80)/Math.log(MAX_VOLUME)));
         Log.e("RingTone", "we here");
 
         Intent i_1 = new Intent(this.getApplicationContext(), BackgroundService.class);

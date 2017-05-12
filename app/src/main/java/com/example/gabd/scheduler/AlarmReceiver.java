@@ -33,29 +33,46 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 public class AlarmReceiver extends BroadcastReceiver{
     private MiBand miBand;
     BluetoothDevice device;
+
     @Override
     public void onReceive(final Context context, Intent intent) {
-        String str = "woah";
-        String act_name = intent.getStringExtra("name");
-        final Alarm alarm = (Alarm) intent.getSerializableExtra("alarm");
-        Log.e("Alarm", "wee+ " +String.valueOf(alarm.getDonecount()));
+        final Alarm alarm = (Alarm) intent.getSerializableExtra("alarm"); //Gets instance of current activity to fire
+
+        //Builds a notification and notifies user through the notification bar
         NotificationManager nmm =   (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         NotificationCompat.Builder ncb = new NotificationCompat.Builder (context)
                 .setSmallIcon(R.drawable.ic_menu_slideshow)
                 .setContentTitle("Activity")
-                .setContentText("Alarm " + act_name + " went off!");
+                .setContentText("Alarm " + alarm.name + " went off!");
+        nmm.notify(0, ncb.build());
 
+        //Calls a mediaplayer to play a ringtone through phone
         Intent serviceIntent = new Intent(context, RingtonePlayingService.class);
         context.startService(serviceIntent);
 
+        //Shows a dialog prompting user to confirm activity
         Intent dialogIntent = new Intent(context, ConfirmActivity.class);
         dialogIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         TinyDB tdb = new TinyDB(context);
         tdb.putObject("curralarm", alarm);
         context.startActivity(dialogIntent);
+
+
+        //Connect to Mi Band
+        connectToMiBand(context);
+    }
+
+    /**
+     * Connects to a paireed Mi Band device
+     *
+     * @param context Used to get current context of application.
+     */
+    private void connectToMiBand(Context context) {
         BluetoothAdapter mBlueToothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBlueToothAdapter.isEnabled()){
-            Object[] devices = BluetoothAdapter.getDefaultAdapter().getBondedDevices().toArray();
+
+            Object[] devices = BluetoothAdapter.getDefaultAdapter().getBondedDevices().toArray();//Returns list of devices paired with mobile device
+            //Searches paired  devices for Mi Band
             for (int i = 0; i < devices.length; i++) {
                 device = (BluetoothDevice) devices[i];
                 if (String.valueOf(device.getClass()).equalsIgnoreCase("class android.bluetooth.BluetoothDevice") && device.getName().equalsIgnoreCase("MI")) {
@@ -63,14 +80,11 @@ public class AlarmReceiver extends BroadcastReceiver{
                 }
             }
             miBand = new MiBand(context);
-            nmm.notify(1, ncb.build());
 
-            int mnm = 1;
-
-
+            //Connects with found device and sets of vibration
             miBand.connect(device, new ActionCallback() {
                 @Override
-                public void onSuccess(Object data) {
+                public void onSuccess(Object data)  {
                     Log.e("Alarm", "Success");
                     miBand.startVibration(VibrationMode.VIBRATION_10_TIMES_WITH_LED);
                     miBand.setDisconnectedListener(new NotifyListener() {
@@ -79,34 +93,13 @@ public class AlarmReceiver extends BroadcastReceiver{
                             Log.e("Alarm", "Done");
                         }
                     });
-
                 }
 
                 @Override
                 public void onFail(int errorCode, String msg) {
                     Log.e("Alarm", "Fail");
-
                 }
             });
         }
     }
-    private static final int REQUEST_EXTERNAL_STORAGE = 1;
-    private static String[] PERMISSIONS_STORAGE = {
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-    };
-    public static void verifyStoragePermissions(Activity activity) {
-        // Check if we have write permission
-        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            // We don't have permission so prompt the user
-            ActivityCompat.requestPermissions(
-                    activity,
-                    PERMISSIONS_STORAGE,
-                    REQUEST_EXTERNAL_STORAGE
-            );
-        }
-    }
-
 }

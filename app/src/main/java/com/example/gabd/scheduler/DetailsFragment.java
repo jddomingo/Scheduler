@@ -22,13 +22,21 @@ public class DetailsFragment extends DialogFragment {
     TinyDB tdb;
     ArrayList<Object> alarmlist;
     int j = 0;
+
+    /**
+     * Creates an Alert Dialog. Prompts user wheter activity was done or not
+     */
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        //Gets alarm currently firing
         tdb = new TinyDB(getActivity());
         curralarm = (Alarm) tdb.getObject("curralarm", Alarm.class);
+
         Log.e("Fragment", String.valueOf(curralarm.getId()));
+
         final Intent frontPageIntent = new Intent(getActivity(), FrontPage.class);
         frontPageIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);alarmlist = new ArrayList<Object>();
+
         Alarm a = new Alarm(0, " ", " ", " ", 0, 0);
         alarmlist = tdb.getListObject("alarmlist", Alarm.class);
         for (int i = 0; i < alarmlist.size();i++) {
@@ -39,12 +47,13 @@ public class DetailsFragment extends DialogFragment {
                 break;
             }
         }
-
         tdb.remove("curralarm");
+
+        //Creates alert dialog and replaces alarm with new count values
         AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
                 .setTitle("Activity Details")
-                .setMessage("Pending Activity!")
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                .setMessage("Was " + curralarm.name + " activity done?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Toast.makeText(getActivity(), "Activity Done!", Toast.LENGTH_SHORT).show();
@@ -57,9 +66,10 @@ public class DetailsFragment extends DialogFragment {
                         getActivity().startActivity(frontPageIntent);
                     }
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(getActivity(), "Activity not done!", Toast.LENGTH_SHORT).show();
                         curralarm.setAlarmcount(curralarm.getAlarmcount()+1);
                         alarmlist.remove(j);
                         alarmlist.add(j, curralarm);

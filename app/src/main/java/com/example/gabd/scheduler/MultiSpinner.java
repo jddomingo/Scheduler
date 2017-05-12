@@ -88,4 +88,11 @@ public class MultiSpinner extends Spinner {
     public interface MultiSpinnerListener {
         public void onItemsSelected(boolean[] selected);
     }
+    public CharSequence[] getEntries() {
+        return entries;
+    }
+
+    public boolean[] getSelected() {
+        return selected;
+    }
 }

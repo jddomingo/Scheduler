@@ -39,8 +39,10 @@ public class ListActivity extends AppCompatActivity {
         onNavigationButtonSelect();
 
         tdb = new TinyDB(this);
+
         Intent myIntent = new Intent(this, AlarmReceiver.class);
         myIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
         recView = (RecyclerView) findViewById(R.id.recview);
 
         LinearLayoutManager llm = new LinearLayoutManager(this);
@@ -118,6 +120,10 @@ public class ListActivity extends AppCompatActivity {
                         });
         recView.addOnItemTouchListener(swipeTouchListener);
     }
+
+    /**
+     * Adds listeners to buttons for navigation. Allows navigation between screens
+     */
     private void onNavigationButtonSelect() {
         ImageButton add = (ImageButton) findViewById(R.id.addalarm);
         ImageButton home = (ImageButton) findViewById(R.id.home);

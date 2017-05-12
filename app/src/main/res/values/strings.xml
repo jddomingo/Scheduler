@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Mi Alarm</string>
+    <string name="app_name">Remind Mi</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -64,13 +64,13 @@
     <string name="choosedays">Choose Days...</string>
 
     <string-array name="day_values">
+        <item>Sun</item>
         <item>Mon</item>
         <item>Tue</item>
         <item>Wed</item>
         <item>Thu</item>
         <item>Fri</item>
         <item>Sat</item>
-        <item>Sun</item>
     </string-array>
 
     <string-array name="multi_select_list_preference_default_value" />

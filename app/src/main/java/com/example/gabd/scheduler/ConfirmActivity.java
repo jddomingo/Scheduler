@@ -16,6 +16,10 @@ public class ConfirmActivity extends Activity {
         showAlertDialog();
     }
 
+
+    /**
+     * Creates a Dialog Fragment. Asks user if activity was done or not.
+     */
     private void showAlertDialog() {
         FragmentManager fm = getFragmentManager();
         DetailsFragment details = new DetailsFragment();

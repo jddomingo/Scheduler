@@ -33,7 +33,10 @@ import android.widget.ToggleButton;
 
 import org.w3c.dom.Text;
 
+import java.lang.reflect.Array;
 import java.util.Calendar;
+
+import static android.R.attr.entries;
 
 public class SchedulePage extends AppCompatActivity {
     AlarmManager alarm_manager;
@@ -56,7 +59,6 @@ public class SchedulePage extends AppCompatActivity {
         setContentView(R.layout.nav_bar_schedule);
         onNavigationButtonSelect();
 
-
         this.context = this;
 
         final Calendar calendar = Calendar.getInstance();
@@ -67,6 +69,8 @@ public class SchedulePage extends AppCompatActivity {
 
         multiSpinner = (MultiSpinner) findViewById(R.id.multispinner);
         Log.e("Spinner", String.valueOf(multiSpinner.getSelectedItem()));
+        final boolean[] selected = multiSpinner.getSelected();
+        CharSequence[] entrys = multiSpinner.getEntries();
 
         daily = (RadioButton) findViewById(R.id.daily);
         weekly = (RadioButton) findViewById(R.id.weekly);
@@ -121,7 +125,12 @@ public class SchedulePage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 time_picker = (TimePicker) findViewById(R.id.timePicker);
-
+                int[] days_array = {0, 0, 0, 0, 0, 0, 0};
+                for (int i = 0; i < 7; i++) {
+                    if (true == selected[i]) {
+                        days_array[i] = 1;
+                    }
+                }
 
                 final int hour = time_picker.getHour();
                 final int minute = time_picker.getMinute();
@@ -136,6 +145,7 @@ public class SchedulePage extends AppCompatActivity {
                 bundle.putString("MINUTE", String.valueOf(minute));
                 bundle.putString("NAME", String.valueOf(act_name));
                 bundle.putString("INTERVAL", interval);
+                bundle.putIntArray("DAYS", days_array);
                 myIntent.putExtras(bundle);
 
                 startService(myIntent);

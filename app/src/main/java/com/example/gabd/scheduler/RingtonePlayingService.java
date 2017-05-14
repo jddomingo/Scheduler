@@ -42,6 +42,9 @@ public class RingtonePlayingService extends Service{
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    /**
+     * Creates a Media Player that plays a ringtone.
+     */
     public int onStartCommand(Intent intent, int flags, int sid){
         final int MAX_VOLUME =  100;
         final float volume = (float) (1 - (Math.log(MAX_VOLUME - 80)/Math.log(MAX_VOLUME)));
@@ -50,7 +53,8 @@ public class RingtonePlayingService extends Service{
         Intent i_1 = new Intent(this.getApplicationContext(), BackgroundService.class);
         PendingIntent pending_intent = PendingIntent.getActivity(this, 0, i_1, 0);
 
-        media_player = MediaPlayer.create(this, R.raw.alarm);
+        //Media player
+        media_player = new MediaPlayer();
         media_player.setAudioStreamType(AudioManager.STREAM_MUSIC);
         media_player.start();
 

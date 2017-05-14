@@ -32,6 +32,9 @@ public class ListActivity extends AppCompatActivity {
     AlarmManager alarm_manager;
     TinyDB tdb;
 
+    /**
+     * Lists all alarms represented by Cards.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,12 +51,16 @@ public class ListActivity extends AppCompatActivity {
         LinearLayoutManager llm = new LinearLayoutManager(this);
         recView.setLayoutManager(llm);
 
+
         initializeData();
         initializeAdapter();
 
     }
 
 
+    /**
+     * Sets list of alarms from the database
+     */
     private void initializeData(){
         alarms = new ArrayList<>();
         ArrayList<Object> alarmlist = tdb.getListObject("alarmlist", Alarm.class);
@@ -62,9 +69,17 @@ public class ListActivity extends AppCompatActivity {
         }
     }
 
+
+    /**
+     * Creates card from set of alarms passed to initializeData()
+     */
     private void initializeAdapter(){
+
+        //Creates an adapter for alarms which fills a Recycler View with Card Views of alarms
         final MyAdapter adapter = new MyAdapter(alarms);
         recView.setAdapter(adapter);
+
+        //Cancels alarm by either swiping cards left or right
         alarm_manager = (AlarmManager) getSystemService(ALARM_SERVICE);
         SwipeableRecyclerViewTouchListener swipeTouchListener =
                 new SwipeableRecyclerViewTouchListener(recView,
@@ -88,6 +103,7 @@ public class ListActivity extends AppCompatActivity {
                             @Override
                             public void onDismissedBySwipeLeft(RecyclerView recyclerView, int[] reverseSortedPositions) {
                                 for (int position : reverseSortedPositions) {
+                                    //removes swiped alarm from database
                                     alarms.remove(position);
                                     Alarm delete_alarm = (Alarm) alarmlist.get(position);
                                     Intent myIntent = new Intent(ListActivity.this, AlarmReceiver.class);

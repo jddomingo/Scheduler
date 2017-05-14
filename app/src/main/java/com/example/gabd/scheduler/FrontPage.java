@@ -106,6 +106,8 @@ public class FrontPage extends AppCompatActivity {
             public void onClick(View v) {
                 if (miband != null) {
                     miband.startVibration(VibrationMode.VIBRATION_WITHOUT_LED);
+                } else {
+                    Toast.makeText(v.getContext(), "No Mi Band Connected", Toast.LENGTH_SHORT);
                 }
             }
         });
@@ -195,6 +197,7 @@ public class FrontPage extends AppCompatActivity {
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION,
     };
+
     private static String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,

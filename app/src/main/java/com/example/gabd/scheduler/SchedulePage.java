@@ -53,6 +53,11 @@ public class SchedulePage extends AppCompatActivity {
     private Context context;
     TinyDB tdb;
 
+
+
+    /**
+     * Passes user input to BackgroundService for alarm creation
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,17 +66,21 @@ public class SchedulePage extends AppCompatActivity {
 
         this.context = this;
 
+        //Sets time and date of alarm
         final Calendar calendar = Calendar.getInstance();
 
+        //Intent that stores data of alarm
         final Intent myIntent = new Intent(this.context, BackgroundService.class);
 
         final Bundle bundle = new Bundle();
 
+        //Input for days when alarm goes off
         multiSpinner = (MultiSpinner) findViewById(R.id.multispinner);
         Log.e("Spinner", String.valueOf(multiSpinner.getSelectedItem()));
         final boolean[] selected = multiSpinner.getSelected();
         CharSequence[] entrys = multiSpinner.getEntries();
 
+        //Input for interval of alarm. Makes sure at most one is checked.
         daily = (RadioButton) findViewById(R.id.daily);
         weekly = (RadioButton) findViewById(R.id.weekly);
         hourly = (RadioButton) findViewById(R.id.hourly);
@@ -117,6 +126,7 @@ public class SchedulePage extends AppCompatActivity {
             }
         });
 
+        //Sets OnClickListener for button that passes info
         Button alarm_start = (Button) findViewById(R.id.fab);
         edit_text = (EditText) findViewById(R.id.editText);
         edit_text.bringToFront();
@@ -140,7 +150,7 @@ public class SchedulePage extends AppCompatActivity {
                 if (weekly.isChecked()) { interval = "weekly"; }
                 if (hourly.isChecked()) { interval = "hourly"; }
 
-
+                //Puts Alarm info into a bundle to send
                 bundle.putString("HOUR", String.valueOf(hour));
                 bundle.putString("MINUTE", String.valueOf(minute));
                 bundle.putString("NAME", String.valueOf(act_name));
@@ -158,6 +168,9 @@ public class SchedulePage extends AppCompatActivity {
     }
 
 
+    /**
+     * Adds listeners to buttons. Allows navigation between screens
+     */
     private void onNavigationButtonSelect() {
         ImageButton add = (ImageButton) findViewById(R.id.addalarm);
         ImageButton home = (ImageButton) findViewById(R.id.home);

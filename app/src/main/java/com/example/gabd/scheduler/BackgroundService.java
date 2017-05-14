@@ -46,8 +46,13 @@ public class BackgroundService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         Log.e("BackgroundService", "Service running");
 
+        final int CALENDAR_MS = 1000;
+        final int CALENDAR_MIN = CALENDAR_MS * 60;
+        final int CALENDAR_HOUR = CALENDAR_MIN * 60;
+        final int CALENDAR_DAY = CALENDAR_HOUR * 24;
+        final int CALENDAR_WEEK = CALENDAR_DAY * 7;
+
         alarm_manager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        final Calendar calendar = Calendar.getInstance();
         String listalarm = "alarmlist";
         TinyDB tdb = new TinyDB(this);
         ArrayList<Object> alarmlist = new ArrayList<Object>();
@@ -73,14 +78,13 @@ public class BackgroundService extends IntentService {
         int hour = Integer.parseInt(str_hour);
         String valinter = new String("Once");
         int intval = new Integer(0);
-        if (interval.equalsIgnoreCase("daily")) { intval = (int) AlarmManager.INTERVAL_DAY;
+        if (interval.equalsIgnoreCase("daily")) { intval = CALENDAR_DAY;
             valinter = "Daily";}
-        if (interval.equalsIgnoreCase("weekly")) {
-            intval = (int) AlarmManager.INTERVAL_DAY;
-            intval = intval*7;
+        else if (interval.equalsIgnoreCase("weekly")) {
+            intval = CALENDAR_WEEK;
             valinter = "Weekly";
         }
-        if (interval.equalsIgnoreCase("hourly")) { intval = (int) AlarmManager.INTERVAL_HOUR;
+        else if (interval.equalsIgnoreCase("hourly")) { intval = CALENDAR_HOUR;
             valinter = "Hourly";}
 
         if (minute < 10) str_min = "0" + String.valueOf(minute);
@@ -88,6 +92,7 @@ public class BackgroundService extends IntentService {
         String time = new String();
         time = str_hour + ":" + str_min;
 
+        final Calendar calendar = Calendar.getInstance();
         final int _id = (int)calendar.getTimeInMillis();
 
         //Creates alarm object and is stored in a database
@@ -103,13 +108,11 @@ public class BackgroundService extends IntentService {
 
         //Sets the calendar to the given time
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, (int)hour);
-        calendar.set(Calendar.MINUTE, (int)minute);
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, minute);
         calendar.set(Calendar.SECOND, 0);
 
         //Creates a system alarm that sends an intent to the AlarmReceiver
         alarm_manager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), intval, pending_intent);
-
-
     }
 }

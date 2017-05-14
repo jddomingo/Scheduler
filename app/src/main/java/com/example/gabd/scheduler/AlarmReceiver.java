@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.le.ScanCallback;
@@ -38,25 +39,27 @@ public class AlarmReceiver extends BroadcastReceiver{
     public void onReceive(final Context context, Intent intent) {
         final Alarm alarm = (Alarm) intent.getSerializableExtra("alarm"); //Gets instance of current activity to fire
 
+        //Shows a dialog prompting user to confirm activity
+        Intent dialogIntent = new Intent(context, ConfirmActivity.class);
+        dialogIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        dialogIntent.putExtra("alarm", alarm);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), dialogIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
         //Builds a notification and notifies user through the notification bar
         NotificationManager nmm =   (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         NotificationCompat.Builder ncb = new NotificationCompat.Builder (context)
                 .setSmallIcon(R.drawable.ic_menu_slideshow)
                 .setContentTitle("Activity")
-                .setContentText("Alarm " + alarm.name + " went off!");
-        nmm.notify(0, ncb.build());
+                .setContentText("Alarm " + alarm.name + " went off!")
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+        nmm.notify((int) System.currentTimeMillis(), ncb.build());
 
         //Calls a mediaplayer to play a ringtone through phone
         Intent serviceIntent = new Intent(context, RingtonePlayingService.class);
         context.startService(serviceIntent);
 
-        //Shows a dialog prompting user to confirm activity
-        Intent dialogIntent = new Intent(context, ConfirmActivity.class);
-        dialogIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        TinyDB tdb = new TinyDB(context);
-        tdb.putObject("curralarm", alarm);
-        context.startActivity(dialogIntent);
-
+        Log.e("ayy", "wow");
 
         //Connect to Mi Band
         connectToMiBand(context);

@@ -30,12 +30,13 @@ public class DetailsFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         //Gets alarm currently firing
         tdb = new TinyDB(getActivity());
-        curralarm = (Alarm) tdb.getObject("curralarm", Alarm.class);
+        curralarm = (Alarm) getArguments().getSerializable("alarm");
 
         Log.e("Fragment", String.valueOf(curralarm.getId()));
 
         final Intent frontPageIntent = new Intent(getActivity(), FrontPage.class);
-        frontPageIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);alarmlist = new ArrayList<Object>();
+        frontPageIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        alarmlist = new ArrayList<Object>();
 
         Alarm a = new Alarm(0, " ", " ", " ", 0, 0);
         alarmlist = tdb.getListObject("alarmlist", Alarm.class);
@@ -62,8 +63,8 @@ public class DetailsFragment extends DialogFragment {
                         alarmlist.remove(j);
                         alarmlist.add(j, curralarm);
                         tdb.putListObject("alarmlist", alarmlist);
-                        dialog.dismiss();
-                        getActivity().startActivity(frontPageIntent);
+                        dismiss();
+                        startActivity(frontPageIntent);
                     }
                 })
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -74,8 +75,8 @@ public class DetailsFragment extends DialogFragment {
                         alarmlist.remove(j);
                         alarmlist.add(j, curralarm);
                         tdb.putListObject("alarmlist", alarmlist);
-                        dialog.dismiss();
-                        getActivity().startActivity(frontPageIntent);
+                        dismiss();
+                        startActivity(frontPageIntent);
                     }
                 }).create();
         return alertDialog;

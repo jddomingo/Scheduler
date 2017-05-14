@@ -38,6 +38,11 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.AlarmViewHolder> {
         TextView alarmcount;
         String name = "test";
 
+        /**
+         * Sets a listener that shows details of alarm when clicking a card
+         *
+         * @param itemView Sets view to a specific card(alarm)
+         */
         public AlarmViewHolder(View itemView) {
             super(itemView);
             cv = (CardView) itemView.findViewById(R.id.cv);
@@ -91,6 +96,11 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.AlarmViewHolder> {
         return avh;
     }
 
+
+
+    /**
+     * Encodes info for each alarm to the Card.
+     */
     @Override
     public void onBindViewHolder(AlarmViewHolder holder, int position) {
         holder.alarmname.setText(alarms.get(position).name);

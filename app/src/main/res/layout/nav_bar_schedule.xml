@@ -7,12 +7,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    tools:openDrawer="start"
     android:background="@drawable/addgrad">
 
     <include
-        layout="@layout/activity_schedule_page"
+        layout="@layout/app_bar_schedule_page"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
 
 </RelativeLayout>

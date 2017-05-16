@@ -2,6 +2,7 @@ package com.example.gabd.scheduler;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.Dialog;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -13,6 +14,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -26,6 +29,9 @@ import com.zhaoxiaodan.miband.MiBand;
 import com.zhaoxiaodan.miband.listeners.NotifyListener;
 import com.zhaoxiaodan.miband.model.VibrationMode;
 
+import java.util.Calendar;
+
+import static android.content.Context.ALARM_SERVICE;
 import static android.content.Context.NOTIFICATION_SERVICE;
 
 /**
@@ -37,13 +43,39 @@ public class AlarmReceiver extends BroadcastReceiver{
 
     @Override
     public void onReceive(final Context context, Intent intent) {
+        Log.e("Alarm Receiver", "how");
         final Alarm alarm = (Alarm) intent.getSerializableExtra("alarm"); //Gets instance of current activity to fire
+        final int hour = intent.getIntExtra("hour", 0);
+        final int minute = intent.getIntExtra("minute", 0);
+        final int interval = intent.getIntExtra("intval", 0);
+        final int _id = intent.getIntExtra("_id", 0);
+        final int date = intent.getIntExtra("date", 0);
+
+        Log.e("Alarm Receiver", String.valueOf(interval) + String.valueOf(hour) + String.valueOf(minute));
+
+        //Sets new alarm depending on interval
+        if (interval > 0) {
+            int repeat = intent.getIntExtra("repeat", 0);
+            Intent receiveIntent = new Intent(context, BackgroundService.class);
+            receiveIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            receiveIntent.putExtra("hour", hour);
+            receiveIntent.putExtra("minute", minute);
+            receiveIntent.putExtra("interval", interval);
+            receiveIntent.putExtra("alarm", alarm);
+            receiveIntent.putExtra("_id", _id);
+            receiveIntent.putExtra("repeat", repeat+1);
+            receiveIntent.putExtra("string", "repeat");
+            receiveIntent.putExtra("date", date);
+            context.startService(receiveIntent);
+        }
 
         //Shows a dialog prompting user to confirm activity
         Intent dialogIntent = new Intent(context, ConfirmActivity.class);
         dialogIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         dialogIntent.putExtra("alarm", alarm);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), dialogIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Log.e("Alarm Receiver", "dialog");
 
         //Builds a notification and notifies user through the notification bar
         NotificationManager nmm =   (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
@@ -55,6 +87,7 @@ public class AlarmReceiver extends BroadcastReceiver{
                 .setAutoCancel(true);
         nmm.notify((int) System.currentTimeMillis(), ncb.build());
 
+        Log.e("Alarm Receiver", "notified");
         //Calls a mediaplayer to play a ringtone through phone
         Intent serviceIntent = new Intent(context, RingtonePlayingService.class);
         context.startService(serviceIntent);

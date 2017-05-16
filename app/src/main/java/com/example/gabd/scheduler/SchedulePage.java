@@ -156,6 +156,7 @@ public class SchedulePage extends AppCompatActivity {
                 bundle.putString("NAME", String.valueOf(act_name));
                 bundle.putString("INTERVAL", interval);
                 bundle.putIntArray("DAYS", days_array);
+                bundle.putString("string", "nope");
                 myIntent.putExtras(bundle);
 
                 startService(myIntent);

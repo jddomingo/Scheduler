@@ -44,14 +44,22 @@ public class FrontPage extends AppCompatActivity {
     private BluetoothAdapter mBA;
     private int connected = 0;
 
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState){
+        super.onRestoreInstanceState(savedInstanceState);
+        this.connected = savedInstanceState.getInt("connected");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.front_page);
+
         onNavigationButtonSelect();
 
         final TinyDB tdb = new TinyDB(this); //Creates instance of alarm database
+
+        connected = tdb.getInt("connected");
 
         miband = new MiBand(this); //Creates instance of Mi Band
 
@@ -63,6 +71,29 @@ public class FrontPage extends AppCompatActivity {
         //Creates a Bluetooth Adapter
         mBA = BluetoothAdapter.getDefaultAdapter();
 
+        if (connected == 1) {
+            if (mBA.isEnabled()) {
+                Object[] devices = BluetoothAdapter.getDefaultAdapter().getBondedDevices().toArray();
+                final BluetoothDevice device = (BluetoothDevice) devices[0];
+                miband = new MiBand(this);
+                mi_connect.setText("Disconnect mi band");
+                miband.connect(device, new ActionCallback() {
+                    @Override
+                    public void onSuccess(Object data) {
+                        Log.d("FPage", "Connected with Mi Band!" + device.getAddress() + device.getName()
+                                + String.valueOf(device.getType())
+                                + String.valueOf(device.getClass()));
+                        //show SnackBar/Toast or something
+                    }
+
+                    @Override
+                    public void onFail(int errorCode, String msg) {
+                        Log.d("Fpage", "Connection failed: " + msg);
+                    }
+                });
+            }
+        }
+
         //Sets listener. Connects with Mi Band device
         mi_connect.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,9 +103,9 @@ public class FrontPage extends AppCompatActivity {
                     Object[] devices = BluetoothAdapter.getDefaultAdapter().getBondedDevices().toArray();
                     final BluetoothDevice device = (BluetoothDevice) devices[0];
                     miband = new MiBand(v.getContext());
-
                     if (connected == 0) {
                         connected = 1;
+                        tdb.putInt("connected", connected);
                         mi_connect.setText("Disconnect mi band");
                         miband.connect(device, new ActionCallback() {
                             @Override
@@ -92,6 +123,7 @@ public class FrontPage extends AppCompatActivity {
                         });
                     } else {
                         connected = 0;
+                        tdb.putInt("connected", connected);
                         miband = null;
                         mi_connect.setText("connect mi band");
                     }
@@ -171,6 +203,7 @@ public class FrontPage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), SchedulePage.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
                 startActivity(intent);
             }
         });
@@ -178,6 +211,7 @@ public class FrontPage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), FrontPage.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
                 startActivity(intent);
             }
         });
@@ -185,6 +219,7 @@ public class FrontPage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), ListActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
                 startActivity(intent);
 
             }
@@ -202,6 +237,12 @@ public class FrontPage extends AppCompatActivity {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
     };
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putInt("connected", connected);
+    }
 
     /**
      * Checks if the app has permission to write to device storage

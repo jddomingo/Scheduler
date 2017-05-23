@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by gabd on 2/13/17.
+ * Created by Jose Gabriel Domingo on 2/13/17.
  */
 public class BackgroundService extends IntentService {
 
@@ -54,8 +54,7 @@ public class BackgroundService extends IntentService {
             final Alarm alarm = (Alarm) intent.getSerializableExtra("alarm");
             final int date = intent.getIntExtra("date", 0);
 
-            //Sets the calendar to the given time
-
+            //Creates intent with alarm info to send back to AlarmReceiver
             Intent myIntent = new Intent(this, AlarmReceiver.class);
             myIntent.putExtra("hour", hour);
             myIntent.putExtra("alarm", alarm);
@@ -64,6 +63,7 @@ public class BackgroundService extends IntentService {
             myIntent.putExtra("intval", interval);
             myIntent.putExtra("_id", id);
             myIntent.putExtra("repeat", repeat);
+            myIntent.putExtra("days", intent.getIntArrayExtra("days"));
 
             //Creates a pending intent called by captured by Broadcast Receivers. Contains info about which receiver it is for
             pending_intent = PendingIntent.getBroadcast(BackgroundService.this, id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -72,10 +72,10 @@ public class BackgroundService extends IntentService {
 
             //Creates a system alarm that sends an intent to the AlarmReceiver
             alarm_manager = (AlarmManager) getSystemService(ALARM_SERVICE);
-            alarm_manager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + interval, pending_intent);
+            alarm_manager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + interval+1000, pending_intent);
 
-        }
-        else {
+        } else {
+            String[] days_of_the_week = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
             Log.e("BackgroundService", "Service running");
 
             final int CALENDAR_MS = 1000;
@@ -97,11 +97,19 @@ public class BackgroundService extends IntentService {
             myIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
             //Gets alarm info from passed intent
+            int chose = intent.getIntExtra("CHOSE", 1);
             String str_min = intent.getStringExtra("MINUTE");
             String str_hour = intent.getStringExtra("HOUR");
             String act_name = intent.getStringExtra("NAME");
             String interval = intent.getStringExtra("INTERVAL");
-            int[] days_array = intent.getIntArrayExtra("DAYS");
+            int[] days = intent.getIntArrayExtra("days");
+
+            for (int j = 0; j < days.length; j++) {
+                if (days[j] == 1) {
+                    Log.e("Checked", String.valueOf(j));
+                }
+                Log.e("NoCheck", String.valueOf(days[j]));
+            }
 
             Log.e("BackgroundService", "" + intent.getStringExtra("NAME"));
 
@@ -110,22 +118,34 @@ public class BackgroundService extends IntentService {
             int hour = Integer.parseInt(str_hour);
             String valinter = new String("Once");
             int intval = 0;
-            if (interval.equalsIgnoreCase("daily")) {
+            if (chose == 1) {
+                if (interval.equalsIgnoreCase("daily")) {
+                    intval = CALENDAR_DAY;
+                    valinter = "Daily";
+                } else if (interval.equalsIgnoreCase("weekly")) {
+                    intval = CALENDAR_WEEK;
+                    valinter = "Weekly";
+                } else if (interval.equalsIgnoreCase("hourly")) {
+                    intval = CALENDAR_HOUR;
+                    valinter = "Hourly";
+                }
+            } else {
+                valinter = "";
                 intval = CALENDAR_DAY;
-                valinter = "Daily";
-            } else if (interval.equalsIgnoreCase("weekly")) {
-                intval = CALENDAR_WEEK;
-                valinter = "Weekly";
-            } else if (interval.equalsIgnoreCase("hourly")) {
-                intval = CALENDAR_HOUR;
-                valinter = "Hourly";
+                for (int i = 0; i < 7; i++) {
+                    if (days[i] == 1) {
+                        valinter = valinter + days_of_the_week[i];
+                    }
+                }
             }
 
+            //Converts time to HH:MM format
             if (minute < 10) str_min = "0" + String.valueOf(minute);
 
             String time = new String();
             time = str_hour + ":" + str_min;
 
+            //Sets id of pending intent to current time (for uniqueness)
             final Calendar calendar = Calendar.getInstance();
             final int _id = (int) calendar.getTimeInMillis();
 
@@ -137,11 +157,12 @@ public class BackgroundService extends IntentService {
             newalarm = (Alarm) alarmlist.get(alarmlist.size() - 1);
             myIntent.putExtra("alarm", newalarm);
             myIntent.putExtra("hour", hour);
+            myIntent.putExtra("chose", chose);
             myIntent.putExtra("minute", minute);
             myIntent.putExtra("intval", intval);
             myIntent.putExtra("_id", _id);
             myIntent.putExtra("date", Calendar.DATE);
-
+            myIntent.putExtra("days", days);
 
             //Sets the calendar to the given time
             calendar.setTimeInMillis(System.currentTimeMillis());
@@ -153,7 +174,7 @@ public class BackgroundService extends IntentService {
             pending_intent = PendingIntent.getBroadcast(BackgroundService.this, _id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             //Creates a system alarm that sends an intent to the AlarmReceiver
-            alarm_manager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pending_intent);
+            alarm_manager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + 1000, pending_intent);
         }
     }
 }

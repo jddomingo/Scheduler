@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by gabd on 5/1/17.
+ * Created by Jose Gabriel Domingo on 5/1/17.
  */
 
 public class DetailsFragment extends DialogFragment {
@@ -52,7 +52,7 @@ public class DetailsFragment extends DialogFragment {
 
         //Creates alert dialog and replaces alarm with new count values
         AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
-                .setTitle("Activity Details")
+                .setTitle("Remind Mi")
                 .setMessage("Was " + curralarm.name + " activity done?")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override

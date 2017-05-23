@@ -6,6 +6,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -22,10 +23,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -37,6 +40,8 @@ import java.lang.reflect.Array;
 import java.util.Calendar;
 
 import static android.R.attr.entries;
+import static com.example.gabd.scheduler.R.*;
+import static com.example.gabd.scheduler.R.drawable.*;
 
 public class SchedulePage extends AppCompatActivity {
     AlarmManager alarm_manager;
@@ -46,13 +51,31 @@ public class SchedulePage extends AppCompatActivity {
     private RadioButton daily;
     private RadioButton hourly;
     private RadioButton weekly;
+    private ToggleButton mon;
+    private ToggleButton tue;
+    private ToggleButton wed;
+    private ToggleButton thu;
+    private ToggleButton fri;
+    private ToggleButton sat;
+    private ToggleButton sun;
     private RadioButton once;
+    private RadioGroup rg;
+    public int[] days = {0, 0, 0, 0, 0, 0, 0};
     private MultiSpinner multiSpinner;
     private static SchedulePage inst;
     private AlarmReceiver alarm;
+    private int buttonclick;
     private Context context;
     TinyDB tdb;
-
+    final RadioGroup.OnCheckedChangeListener ToggleListener = new RadioGroup.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(RadioGroup group, int checkedId) {
+            for (int i = 0; i < group.getChildCount(); i++) {
+                final ToggleButton view = (ToggleButton) group.getChildAt(checkedId);
+                view.setChecked(view.getId() == checkedId);
+            }
+        }
+    };
 
 
     /**
@@ -61,8 +84,11 @@ public class SchedulePage extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.nav_bar_schedule);
+        setContentView(layout.nav_bar_schedule);
         onNavigationButtonSelect();
+
+        rg = (RadioGroup) findViewById(id.toggleGroup);
+        rg.setOnCheckedChangeListener(ToggleListener);
 
         this.context = this;
 
@@ -74,88 +100,151 @@ public class SchedulePage extends AppCompatActivity {
 
         final Bundle bundle = new Bundle();
 
-        //Input for days when alarm goes off
-        multiSpinner = (MultiSpinner) findViewById(R.id.multispinner);
-        Log.e("Spinner", String.valueOf(multiSpinner.getSelectedItem()));
-        final boolean[] selected = multiSpinner.getSelected();
-        CharSequence[] entrys = multiSpinner.getEntries();
 
         //Input for interval of alarm. Makes sure at most one is checked.
-        daily = (RadioButton) findViewById(R.id.daily);
-        weekly = (RadioButton) findViewById(R.id.weekly);
-        hourly = (RadioButton) findViewById(R.id.hourly);
-        once = (RadioButton) findViewById(R.id.once);
-        daily.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+
+        daily = (RadioButton) findViewById(id.daily);
+        weekly = (RadioButton) findViewById(id.weekly);
+        hourly = (RadioButton) findViewById(id.hourly);
+        once = (RadioButton) findViewById(id.once);
+
+        //Sets OnClickListener for button that passes info
+        Button alarm_start = (Button) findViewById(id.fab);
+        mon = (ToggleButton) findViewById(id.Monday);
+        mon.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    weekly.setChecked(false);
-                    hourly.setChecked(false);
-                    once.setChecked(false);
-                }
+            public void onClick(View v) {
+                if (mon.isChecked()) mon.setBackgroundDrawable(getResources().getDrawable(drawable.buttonclick));
+                else mon.setBackgroundDrawable(getResources().getDrawable(drawable.buttonshape));
             }
         });
-        weekly.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        tue = (ToggleButton) findViewById(id.Tuesday);
+        tue.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    daily.setChecked(false);
-                    hourly.setChecked(false);
-                    once.setChecked(false);
-                }
+            public void onClick(View v) {
+                if (tue.isChecked()) tue.setBackgroundDrawable(getResources().getDrawable(drawable.buttonclick));
+                else tue.setBackgroundDrawable(getResources().getDrawable(drawable.buttonshape));
             }
         });
-        hourly.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        wed = (ToggleButton) findViewById(id.Wednesday);
+        wed.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    daily.setChecked(false);
-                    weekly.setChecked(false);
-                    once.setChecked(false);
-                }
+            public void onClick(View v) {
+                if (wed.isChecked()) wed.setBackgroundDrawable(getResources().getDrawable(drawable.buttonclick));
+                else wed.setBackgroundDrawable(getResources().getDrawable(drawable.buttonshape));
             }
         });
-        once.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        thu = (ToggleButton) findViewById(id.Thursday);
+        thu.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    daily.setChecked(false);
-                    weekly.setChecked(false);
-                    hourly.setChecked(false);
-                }
+            public void onClick(View v) {
+                if (thu.isChecked()) thu.setBackgroundDrawable(getResources().getDrawable(drawable.buttonclick));
+                else thu.setBackgroundDrawable(getResources().getDrawable(drawable.buttonshape));
+            }
+        });
+        fri = (ToggleButton) findViewById(id.Friday);
+        fri.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (fri.isChecked()) fri.setBackgroundDrawable(getResources().getDrawable(drawable.buttonclick));
+                else fri.setBackgroundDrawable(getResources().getDrawable(drawable.buttonshape));
+            }
+        });
+        sat = (ToggleButton) findViewById(id.Saturday);
+        sat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (sat.isChecked()) sat.setBackgroundDrawable(getResources().getDrawable(drawable.buttonclick));
+                else sat.setBackgroundDrawable(getResources().getDrawable(drawable.buttonshape));
+            }
+        });
+        sun = (ToggleButton) findViewById(id.Sunday);
+        sun.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (sun.isChecked()) sun.setBackgroundDrawable(getResources().getDrawable(drawable.buttonclick));
+                else sun.setBackgroundDrawable(getResources().getDrawable(drawable.buttonshape));
             }
         });
 
-        //Sets OnClickListener for button that passes info
-        Button alarm_start = (Button) findViewById(R.id.fab);
-        edit_text = (EditText) findViewById(R.id.editText);
+        //Activity Name Handler
+        edit_text = (EditText) findViewById(id.editText);
         edit_text.bringToFront();
+
+        //Interval Option
+        final RadioGroup rgInterval = (RadioGroup) findViewById(id.intervalGroup);
+        final CheckBox choose = (CheckBox) findViewById(id.choose);
+        for (int j = 0; j < rg.getChildCount(); j++) {
+            rg.getChildAt(j).setEnabled(false);
+        }
+        choose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (choose.isChecked()) {
+                    for (int i = 0; i < rgInterval.getChildCount(); i++) {
+                        rgInterval.getChildAt(i).setEnabled(false);
+                    }
+                    for (int j = 0; j < rg.getChildCount(); j++) {
+                        rg.getChildAt(j).setEnabled(true);
+                    }
+                } else {
+                    for (int i = 0; i < rgInterval.getChildCount(); i++) {
+                        rgInterval.getChildAt(i).setEnabled(true);
+                    }
+                    for (int j = 0; j < rg.getChildCount(); j++) {
+                        rg.getChildAt(j).setEnabled(false);
+                    }
+                }
+            }
+        });
+        buttonclick = drawable.buttonclick;
         alarm_start.setOnClickListener(new View.OnClickListener() {
             @TargetApi(Build.VERSION_CODES.M)
             @Override
             public void onClick(View v) {
-                time_picker = (TimePicker) findViewById(R.id.timePicker);
-                int[] days_array = {0, 0, 0, 0, 0, 0, 0};
-                for (int i = 0; i < 7; i++) {
-                    if (true == selected[i]) {
-                        days_array[i] = 1;
-                    }
-                }
+                if (mon.isChecked()) days[1] = 1;
+                else days[1] = 0;
+                if (tue.isChecked()) days[2] = 1;
+                else days[2] = 0;
+                if (wed.isChecked()) days[3] = 1;
+                else days[3] = 0;
+                if (thu.isChecked()) days[4] = 1;
+                else days[4] = 0;
+                if (fri.isChecked()) days[5] = 1;
+                else days[5] = 0;
+                if (sat.isChecked()) days[6] = 1;
+                else days[6] = 0;
+                if (sun.isChecked()) days[0] = 1;
+                else days[0] = 0;
+
+                time_picker = (TimePicker) findViewById(id.timePicker);
 
                 final int hour = time_picker.getHour();
                 final int minute = time_picker.getMinute();
                 final Editable act_name = edit_text.getText();
                 String interval = new String("once");
-                if (daily.isChecked()) { interval = "daily"; }
-                if (weekly.isChecked()) { interval = "weekly"; }
-                if (hourly.isChecked()) { interval = "hourly"; }
+                if (!(choose.isChecked())) {
+                    if (daily.isChecked()) {
+                        interval = "daily";
+                    }
+                    if (weekly.isChecked()) {
+                        interval = "weekly";
+                    }
+                    if (hourly.isChecked()) {
+                        interval = "hourly";
+                    }
+                    bundle.putInt("CHOSE", 1);
+                } else {
+                    bundle.putIntArray("days", days);
+                    bundle.putInt("CHOSE", 2);
+                }
 
                 //Puts Alarm info into a bundle to send
                 bundle.putString("HOUR", String.valueOf(hour));
+                bundle.putString("INTERVAL", interval);
                 bundle.putString("MINUTE", String.valueOf(minute));
                 bundle.putString("NAME", String.valueOf(act_name));
-                bundle.putString("INTERVAL", interval);
-                bundle.putIntArray("DAYS", days_array);
                 bundle.putString("string", "nope");
                 myIntent.putExtras(bundle);
 
@@ -173,9 +262,9 @@ public class SchedulePage extends AppCompatActivity {
      * Adds listeners to buttons. Allows navigation between screens
      */
     private void onNavigationButtonSelect() {
-        ImageButton add = (ImageButton) findViewById(R.id.addalarm);
-        ImageButton home = (ImageButton) findViewById(R.id.home);
-        ImageButton list = (ImageButton) findViewById(R.id.listsched);
+        ImageButton add = (ImageButton) findViewById(id.addalarm);
+        ImageButton home = (ImageButton) findViewById(id.home);
+        ImageButton list = (ImageButton) findViewById(id.listsched);
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -198,5 +287,6 @@ public class SchedulePage extends AppCompatActivity {
             }
         });
     }
+
 
 }

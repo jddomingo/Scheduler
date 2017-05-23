@@ -7,7 +7,7 @@ import android.os.Parcelable;
 import android.view.View;
 
 /**
- * Created by gabd on 5/7/17.
+ * Created by Jose Gabriel Domingo on 5/7/17.
  */
 
 public class ConfirmActivity extends Activity {

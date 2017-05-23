@@ -3,7 +3,7 @@ package com.example.gabd.scheduler;
 import java.io.Serializable;
 
 /**
- * Created by gabd on 3/9/17.
+ * Created by Jose Gabriel Domingo on 3/9/17.
  */
 @SuppressWarnings("serial")
 public class Alarm implements Serializable{

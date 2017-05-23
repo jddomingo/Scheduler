@@ -17,37 +17,39 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/alarm_hour"
+            android:id="@+id/alarm_name"
             android:textSize="30sp"
-            android:text="awww"
-            android:layout_marginStart="11dp"
+            android:text="Activity Name"
             android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:text="Repetition"
+            android:textSize="25sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/alarm_interval"
+            android:layout_alignBaseline="@+id/alarm_count"
+            android:layout_alignBottom="@+id/alarm_count"
             android:layout_alignParentStart="true" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/alarm_name"
-            android:textSize="20sp"
-            android:text="ayy"
-            android:layout_alignParentBottom="true"
-            android:layout_alignStart="@+id/alarm_hour" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/alarm_count"
             android:textSize="20sp"
-            android:text="ccccc"
+            android:text="Metrics"
             android:layout_alignParentBottom="true"
-            android:layout_alignEnd="@+id/alarm_interval" />
+            android:layout_alignParentEnd="true" />
 
         <TextView
-            android:text="hao"
-            android:textSize="25sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/alarm_interval"
-            android:layout_alignBottom="@+id/alarm_hour"
+            android:id="@+id/alarm_hour"
+            android:textSize="20sp"
+            android:text="Alarm Time"
+            android:layout_alignBaseline="@+id/alarm_name"
+            android:layout_alignBottom="@+id/alarm_name"
             android:layout_alignParentEnd="true" />
 
     </RelativeLayout>

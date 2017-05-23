@@ -35,9 +35,9 @@ import static android.content.Context.ALARM_SERVICE;
 import static android.content.Context.NOTIFICATION_SERVICE;
 
 /**
- * Created by gabd on 2/8/17.
+ * Created by Jose Gabriel Domingo on 2/8/17.
  */
-public class AlarmReceiver extends BroadcastReceiver{
+public class AlarmReceiver extends BroadcastReceiver {
     private MiBand miBand;
     BluetoothDevice device;
 
@@ -46,12 +46,16 @@ public class AlarmReceiver extends BroadcastReceiver{
         Log.e("Alarm Receiver", "how");
         final Alarm alarm = (Alarm) intent.getSerializableExtra("alarm"); //Gets instance of current activity to fire
         final int hour = intent.getIntExtra("hour", 0);
+        final int chose = intent.getIntExtra("chose", 1);
         final int minute = intent.getIntExtra("minute", 0);
         final int interval = intent.getIntExtra("intval", 0);
         final int _id = intent.getIntExtra("_id", 0);
         final int date = intent.getIntExtra("date", 0);
+        final int[] days = intent.getIntArrayExtra("days");
+        final int weekday = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+        boolean every = true;
 
-        Log.e("Alarm Receiver", String.valueOf(interval) + String.valueOf(hour) + String.valueOf(minute));
+        Log.e("weekday", String.valueOf(weekday));
 
         //Sets new alarm depending on interval
         if (interval > 0) {
@@ -66,37 +70,46 @@ public class AlarmReceiver extends BroadcastReceiver{
             receiveIntent.putExtra("repeat", repeat+1);
             receiveIntent.putExtra("string", "repeat");
             receiveIntent.putExtra("date", date);
+            receiveIntent.putExtra("days", days);
             context.startService(receiveIntent);
         }
 
-        //Shows a dialog prompting user to confirm activity
-        Intent dialogIntent = new Intent(context, ConfirmActivity.class);
-        dialogIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        dialogIntent.putExtra("alarm", alarm);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), dialogIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        for (int i = 0; i < days.length; i++) {
+            if (days[i] != 0) {
+                every = false;
+                break;
+            }
+        }
 
-        Log.e("Alarm Receiver", "dialog");
+        if ((chose == 2 && days[weekday-1] == 1) || (chose == 1)) {
+            //Shows a dialog prompting user to confirm activity
+            Intent dialogIntent = new Intent(context, ConfirmActivity.class);
+            dialogIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            dialogIntent.putExtra("alarm", alarm);
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), dialogIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        //Builds a notification and notifies user through the notification bar
-        NotificationManager nmm =   (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
-        NotificationCompat.Builder ncb = new NotificationCompat.Builder (context)
-                .setSmallIcon(R.drawable.ic_menu_slideshow)
-                .setContentTitle("Activity")
-                .setContentText("Alarm " + alarm.name + " went off!")
-                .setContentIntent(pendingIntent)
-                .setAutoCancel(true);
-        nmm.notify((int) System.currentTimeMillis(), ncb.build());
+            Log.e("Alarm Receiver", "dialog");
 
-        Log.e("Alarm Receiver", "notified");
-        //Calls a mediaplayer to play a ringtone through phone
-        Intent serviceIntent = new Intent(context, RingtonePlayingService.class);
-        context.startService(serviceIntent);
+            //Builds a notification and notifies user through the notification bar
+            NotificationManager nmm = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+            NotificationCompat.Builder ncb = new NotificationCompat.Builder(context)
+                    .setSmallIcon(R.drawable.ic_info_black_24dp)
+                    .setContentTitle("Remind Mi")
+                    .setContentText("Activity: " + alarm.name + " went off!")
+                    .setContentIntent(pendingIntent)
+                    .setAutoCancel(true);
+            nmm.notify((int) System.currentTimeMillis(), ncb.build());
 
-        Log.e("ayy", "wow");
+            Log.e("Alarm Receiver", "notified");
 
-        //Connect to Mi Band
-        connectToMiBand(context);
-    }
+            //Calls a mediaplayer to play a ringtone through phone
+            Intent serviceIntent = new Intent(context, RingtonePlayingService.class);
+            context.startService(serviceIntent);
+
+            //Connect to Mi Band
+            connectToMiBand(context);
+        }
+}
 
     /**
      * Connects to a paireed Mi Band device
@@ -107,7 +120,8 @@ public class AlarmReceiver extends BroadcastReceiver{
         BluetoothAdapter mBlueToothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBlueToothAdapter.isEnabled()){
 
-            Object[] devices = BluetoothAdapter.getDefaultAdapter().getBondedDevices().toArray();//Returns list of devices paired with mobile device
+            Object[] devices = BluetoothAdapter.getDefaultAdapter().getBondedDevices().toArray(); //Returns list of devices paired with mobile device
+
             //Searches paired  devices for Mi Band
             for (int i = 0; i < devices.length; i++) {
                 device = (BluetoothDevice) devices[i];
@@ -115,10 +129,12 @@ public class AlarmReceiver extends BroadcastReceiver{
                     break;
                 }
             }
+
             miBand = new MiBand(context);
 
             //Connects with found device and sets of vibration
             miBand.connect(device, new ActionCallback() {
+
                 @Override
                 public void onSuccess(Object data)  {
                     Log.e("Alarm", "Success");

@@ -60,7 +60,6 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         //Sets new alarm depending on interval
         if (interval > 0) {
-
             int repeat = intent.getIntExtra("repeat", 0);
             Intent receiveIntent = new Intent(context, BackgroundService.class);
             receiveIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -69,6 +68,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             receiveIntent.putExtra("interval", interval);
             receiveIntent.putExtra("alarm", alarm);
             receiveIntent.putExtra("_id", _id);
+            receiveIntent.putExtra("chose", chose);
             receiveIntent.putExtra("repeat", repeat+1);
             receiveIntent.putExtra("string", "repeat");
             receiveIntent.putExtra("date", date);
@@ -82,6 +82,9 @@ public class AlarmReceiver extends BroadcastReceiver {
                 break;
             }
         }
+
+        Log.e("choose", String.valueOf(chose));
+        Log.e("choose", String.valueOf(weekday));
 
         if ((chose == 2 && days[weekday-1] == 1) || (chose == 1)) {
             //Shows a dialog prompting user to confirm activity

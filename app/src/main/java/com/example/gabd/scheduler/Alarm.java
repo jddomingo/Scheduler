@@ -9,6 +9,8 @@ import java.io.Serializable;
 public class Alarm implements Serializable{
     int alarmcount; //Counts number of time activity was set off
     int donecount; //Counts number of times activity was done
+    int hour;
+    int minute;
     String time; //Time alarm is set (hh:mm)
     String name; //Name of Activity set by alarm
     String interval; //Interval at which alarm sets off (e.g every hour, day, week)
@@ -21,7 +23,7 @@ public class Alarm implements Serializable{
 
     }
 
-    public Alarm(int id, String name, String time, String interval, int donecount, int alarmcount, int[] days, int startdate, int chose) {
+    public Alarm(int id, String name, String time, String interval, int donecount, int alarmcount, int[] days, int startdate, int chose, int hour, int minute) {
         this.id = id;
         this.time = time;
         this.name = name;
@@ -31,6 +33,8 @@ public class Alarm implements Serializable{
         this.days = days;
         this.startdate = startdate;
         this.chose = chose;
+        this.hour = hour;
+        this.minute = minute;
     }
 
 

@@ -220,6 +220,7 @@ public class SchedulePage extends AppCompatActivity {
 
                 time_picker = (TimePicker) findViewById(id.timePicker);
 
+                bundle.putInt("CHOSE", 1);
                 final int hour = time_picker.getHour();
                 final int minute = time_picker.getMinute();
                 final Editable act_name = edit_text.getText();

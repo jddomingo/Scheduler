@@ -76,7 +76,7 @@ public class DetailsFragment extends DialogFragment {
         final AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
                 .setTitle("Remind Mi")
                 .setIcon(R.mipmap.ic_launcher)
-                .setMessage("Was " + curralarm.name + " activity done?")
+                .setMessage("Was " + curralarm.name + " activity done?    " + String.valueOf(curralarm.getDonecount()) + "/" + String.valueOf(curralarm.getAlarmcount()))
                 .setPositiveButton("Yes",new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

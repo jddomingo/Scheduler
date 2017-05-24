@@ -21,6 +21,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
+import static java.lang.Math.abs;
+
 /**
  * Created by Jose Gabriel Domingo on 2/13/17.
  */
@@ -53,18 +55,16 @@ public class BackgroundService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
 
-        if (intent.getAction() == Intent.ACTION_TIME_CHANGED || intent.getAction() == Intent.ACTION_TIMEZONE_CHANGED){
-            Log.e("ayy", "time change");
-        }
-
         if (intent.getStringExtra("string").equalsIgnoreCase("repeat")) {
             final int hour = intent.getIntExtra("hour", 0);
             final int minute = intent.getIntExtra("minute", 0);
-            final int interval = intent.getIntExtra("interval", 0);
+            int interval = intent.getIntExtra("interval", 0);
             final int id = intent.getIntExtra("_id", 0);
             final int repeat = intent.getIntExtra("repeat", 1);
             final Alarm alarm = (Alarm) intent.getSerializableExtra("alarm");
             final int date = intent.getIntExtra("date", 0);
+            final int chose = intent.getIntExtra("chose", 1);
+            final int[] days = intent.getIntArrayExtra("days");
 
             //Creates intent with alarm info to send back to AlarmReceiver
             Intent myIntent = new Intent(this, AlarmReceiver.class);
@@ -73,24 +73,46 @@ public class BackgroundService extends IntentService {
             myIntent.putExtra("minute", minute);
             myIntent.putExtra("intval", interval);
             myIntent.putExtra("_id", id);
+            myIntent.putExtra("chose", chose);
             myIntent.putExtra("repeat", repeat + 1);
             myIntent.putExtra("days", intent.getIntArrayExtra("days"));
 
             //Creates a pending intent called by captured by Broadcast Receivers. Contains info about which receiver it is for
             pending_intent = PendingIntent.getBroadcast(BackgroundService.this, id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+            Log.e("chose", String.valueOf(chose));
+
             Calendar cal = Calendar.getInstance();
-            cal.setTimeInMillis(System.currentTimeMillis());
-            cal.set(Calendar.MINUTE, minute);
-            cal.set(Calendar.SECOND, 0);
-            if (interval == CALENDAR_DAY) {
+            //Interval and calendar is set dependent on Interval Type
+            if (chose == 1) {
+                cal.setTimeInMillis(System.currentTimeMillis());
+                cal.set(Calendar.MINUTE, minute);
+                cal.set(Calendar.SECOND, 0);
+                if (interval == CALENDAR_DAY) {
+                    cal.set(Calendar.HOUR, hour);
+                }
+                if (interval == CALENDAR_WEEK) {
+                    cal.set(Calendar.DAY_OF_WEEK, date);
+                }
+            } else {
+                int today = cal.get(Calendar.DAY_OF_WEEK);
+                int i = today%7;
+                while (days[i] != 1) {
+                    i++;
+                    if (i == 7) i = 0;
+                }
+                Log.e("repeattoday", String.valueOf(today));
+                Log.e("repeati", String.valueOf(i));
+                if (i < today) i = i + 7;
+                interval = (abs(i-today)+1) * CALENDAR_DAY;
+                cal.setTimeInMillis(System.currentTimeMillis());
+                cal.set(Calendar.MINUTE, minute);
+                cal.set(Calendar.SECOND, 0);
                 cal.set(Calendar.HOUR, hour);
             }
-            if (interval == CALENDAR_WEEK) {
-                cal.set(Calendar.DAY_OF_WEEK, date);
-            }
 
-            Log.e("repeat", String.valueOf(interval*repeat));
+            Log.e("repeat", String.valueOf(interval));
+            Log.e("repeatday", String.valueOf(CALENDAR_DAY));
 
             //Creates a system alarm that sends an intent to the AlarmReceiver
             alarm_manager = (AlarmManager) getSystemService(ALARM_SERVICE);
@@ -167,7 +189,7 @@ public class BackgroundService extends IntentService {
             final int date = calendar.get(Calendar.DAY_OF_WEEK);
 
             //Creates alarm object and is stored in a database
-            Alarm newalarm = new Alarm(_id, act_name, time, valinter, 0, 0, days, date, chose);
+            Alarm newalarm = new Alarm(_id, act_name, time, valinter, 0, 0, days, date, chose, hour, minute);
             alarmlist.add(newalarm);
             tdb.putListObject(listalarm, alarmlist);
             myIntent.putExtra("name", act_name);

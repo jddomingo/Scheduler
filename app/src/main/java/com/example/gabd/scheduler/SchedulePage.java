@@ -236,7 +236,6 @@ public class SchedulePage extends AppCompatActivity {
                     }
                     bundle.putInt("CHOSE", 1);
                 } else {
-                    bundle.putIntArray("days", days);
                     bundle.putInt("CHOSE", 2);
                 }
 
@@ -246,6 +245,7 @@ public class SchedulePage extends AppCompatActivity {
                 bundle.putString("MINUTE", String.valueOf(minute));
                 bundle.putString("NAME", String.valueOf(act_name));
                 bundle.putString("string", "nope");
+                bundle.putIntArray("days", days);
                 myIntent.putExtras(bundle);
 
                 startService(myIntent);

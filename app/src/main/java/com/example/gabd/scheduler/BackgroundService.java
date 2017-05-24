@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.SystemClock;
 import android.support.v4.content.LocalBroadcastManager;
@@ -33,6 +34,13 @@ public class BackgroundService extends IntentService {
     private Context context;
     TinyDB tdb;
     int minute;
+
+    //1000 = 1milisecond
+    final int CALENDAR_MS = 1000;
+    final int CALENDAR_MIN = CALENDAR_MS * 60;
+    final int CALENDAR_HOUR = CALENDAR_MIN * 60;
+    final int CALENDAR_DAY = CALENDAR_HOUR * 24;
+    final int CALENDAR_WEEK = CALENDAR_DAY * 7;
     public BackgroundService() {
         super("Background");
     }
@@ -44,6 +52,10 @@ public class BackgroundService extends IntentService {
      */
     @Override
     protected void onHandleIntent(Intent intent) {
+
+        if (intent.getAction() == Intent.ACTION_TIME_CHANGED || intent.getAction() == Intent.ACTION_TIMEZONE_CHANGED){
+            Log.e("ayy", "time change");
+        }
 
         if (intent.getStringExtra("string").equalsIgnoreCase("repeat")) {
             final int hour = intent.getIntExtra("hour", 0);
@@ -58,31 +70,35 @@ public class BackgroundService extends IntentService {
             Intent myIntent = new Intent(this, AlarmReceiver.class);
             myIntent.putExtra("hour", hour);
             myIntent.putExtra("alarm", alarm);
-            myIntent.putExtra("hour", hour);
             myIntent.putExtra("minute", minute);
             myIntent.putExtra("intval", interval);
             myIntent.putExtra("_id", id);
-            myIntent.putExtra("repeat", repeat);
+            myIntent.putExtra("repeat", repeat + 1);
             myIntent.putExtra("days", intent.getIntArrayExtra("days"));
 
             //Creates a pending intent called by captured by Broadcast Receivers. Contains info about which receiver it is for
             pending_intent = PendingIntent.getBroadcast(BackgroundService.this, id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(System.currentTimeMillis());
+            cal.set(Calendar.MINUTE, minute);
+            cal.set(Calendar.SECOND, 0);
+            if (interval == CALENDAR_DAY) {
+                cal.set(Calendar.HOUR, hour);
+            }
+            if (interval == CALENDAR_WEEK) {
+                cal.set(Calendar.DAY_OF_WEEK, date);
+            }
+
             Log.e("repeat", String.valueOf(interval*repeat));
 
             //Creates a system alarm that sends an intent to the AlarmReceiver
             alarm_manager = (AlarmManager) getSystemService(ALARM_SERVICE);
-            alarm_manager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + interval+1000, pending_intent);
+            alarm_manager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis() + interval, pending_intent);
 
         } else {
             String[] days_of_the_week = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
             Log.e("BackgroundService", "Service running");
-
-            final int CALENDAR_MS = 1000;
-            final int CALENDAR_MIN = CALENDAR_MS * 60;
-            final int CALENDAR_HOUR = CALENDAR_MIN * 60;
-            final int CALENDAR_DAY = CALENDAR_HOUR * 24;
-            final int CALENDAR_WEEK = CALENDAR_DAY * 7;
 
             alarm_manager = (AlarmManager) getSystemService(ALARM_SERVICE);
             String listalarm = "alarmlist";
@@ -148,9 +164,10 @@ public class BackgroundService extends IntentService {
             //Sets id of pending intent to current time (for uniqueness)
             final Calendar calendar = Calendar.getInstance();
             final int _id = (int) calendar.getTimeInMillis();
+            final int date = calendar.get(Calendar.DAY_OF_WEEK);
 
             //Creates alarm object and is stored in a database
-            Alarm newalarm = new Alarm(_id, act_name, time, valinter, 0, 0);
+            Alarm newalarm = new Alarm(_id, act_name, time, valinter, 0, 0, days, date, chose);
             alarmlist.add(newalarm);
             tdb.putListObject(listalarm, alarmlist);
             myIntent.putExtra("name", act_name);
@@ -161,8 +178,8 @@ public class BackgroundService extends IntentService {
             myIntent.putExtra("minute", minute);
             myIntent.putExtra("intval", intval);
             myIntent.putExtra("_id", _id);
-            myIntent.putExtra("date", Calendar.DATE);
             myIntent.putExtra("days", days);
+            myIntent.putExtra("date", date);
 
             //Sets the calendar to the given time
             calendar.setTimeInMillis(System.currentTimeMillis());

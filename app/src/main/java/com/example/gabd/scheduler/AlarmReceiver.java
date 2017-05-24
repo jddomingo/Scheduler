@@ -43,7 +43,6 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(final Context context, Intent intent) {
-        Log.e("Alarm Receiver", "how");
         final Alarm alarm = (Alarm) intent.getSerializableExtra("alarm"); //Gets instance of current activity to fire
         final int hour = intent.getIntExtra("hour", 0);
         final int chose = intent.getIntExtra("chose", 1);
@@ -55,10 +54,13 @@ public class AlarmReceiver extends BroadcastReceiver {
         final int weekday = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
         boolean every = true;
 
+        TinyDB tdb = new TinyDB(context);
+
         Log.e("weekday", String.valueOf(weekday));
 
         //Sets new alarm depending on interval
         if (interval > 0) {
+
             int repeat = intent.getIntExtra("repeat", 0);
             Intent receiveIntent = new Intent(context, BackgroundService.class);
             receiveIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -86,7 +88,8 @@ public class AlarmReceiver extends BroadcastReceiver {
             Intent dialogIntent = new Intent(context, ConfirmActivity.class);
             dialogIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             dialogIntent.putExtra("alarm", alarm);
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), dialogIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            context.startActivity(dialogIntent);
+
 
             Log.e("Alarm Receiver", "dialog");
 
@@ -96,7 +99,6 @@ public class AlarmReceiver extends BroadcastReceiver {
                     .setSmallIcon(R.drawable.ic_info_black_24dp)
                     .setContentTitle("Remind Mi")
                     .setContentText("Activity: " + alarm.name + " went off!")
-                    .setContentIntent(pendingIntent)
                     .setAutoCancel(true);
             nmm.notify((int) System.currentTimeMillis(), ncb.build());
 
@@ -107,7 +109,8 @@ public class AlarmReceiver extends BroadcastReceiver {
             context.startService(serviceIntent);
 
             //Connect to Mi Band
-            connectToMiBand(context);
+            int connected = tdb.getInt("connected");
+            if (connected == 1) connectToMiBand(context);
         }
 }
 

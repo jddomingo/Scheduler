@@ -1,6 +1,7 @@
 package com.example.gabd.scheduler;
 
 import android.annotation.TargetApi;
+import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -13,6 +14,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.IBinder;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.NavigationView;
@@ -30,7 +32,7 @@ public class RingtonePlayingService extends Service{
 
     private boolean running;
     private Context context;
-    MediaPlayer media_player;
+    private static MediaPlayer media_player = Singleton.getInstance();
     private int sid;
     private MiBand miBand;
 
@@ -54,9 +56,11 @@ public class RingtonePlayingService extends Service{
         PendingIntent pending_intent = PendingIntent.getActivity(this, 0, i_1, 0);
 
         //Media player
-        media_player = new MediaPlayer();
-        media_player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        media_player.start();
+        if (!(media_player.isPlaying())) {
+            media_player = MediaPlayer.create(this, R.raw.alarm);
+            media_player.start();
+        }
+
 
         return START_NOT_STICKY;
     }
@@ -68,6 +72,17 @@ public class RingtonePlayingService extends Service{
 
         super.onDestroy();
         this.running = false;
+    }
+
+    public static final class Singleton extends Application {
+        static MediaPlayer instance;
+
+        public static MediaPlayer getInstance() {
+            if (instance == null) {
+                instance = new MediaPlayer();
+            }
+            return instance;
+        }
     }
 
 }

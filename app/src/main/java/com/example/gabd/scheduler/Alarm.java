@@ -13,14 +13,24 @@ public class Alarm implements Serializable{
     String name; //Name of Activity set by alarm
     String interval; //Interval at which alarm sets off (e.g every hour, day, week)
     int id; //Unique id of alarm (Usually needed to access corresponding pending_intent)
+    int[] days;
+    int startdate;
+    int chose;
 
-    public Alarm(int id, String name, String time, String interval, int donecount, int alarmcount) {
+    public Alarm(){
+
+    }
+
+    public Alarm(int id, String name, String time, String interval, int donecount, int alarmcount, int[] days, int startdate, int chose) {
         this.id = id;
         this.time = time;
         this.name = name;
         this.interval = interval;
         this.donecount = donecount;
         this.alarmcount = alarmcount;
+        this.days = days;
+        this.startdate = startdate;
+        this.chose = chose;
     }
 
 

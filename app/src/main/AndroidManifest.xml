@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?><!-- suppress AndroidDomInspection -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.gabd.scheduler">
+
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="true"
@@ -23,14 +24,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
         <uses-permission android:name="android.permission.BLUETOOTH" />
         <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-        <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
-        <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+        <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+        <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
         <activity
-            android:name="ListActivity"
+            android:name=".ListActivity"
             android:label="List Activity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -44,7 +46,12 @@
             android:name=".ConfirmActivity"
             android:theme="@style/AppTheme.NoActionBar" />
 
-        <receiver android:name=".AlarmReceiver" />
+        <receiver android:name=".AlarmReceiver"></receiver>
+        <receiver android:name=".TimeSetReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.TIME_SET"/>
+            </intent-filter>
+        </receiver>
 
         <service
             android:name=".RingtonePlayingService"
@@ -53,7 +60,6 @@
             android:name=".BackgroundService"
             android:enabled="true"
             android:exported="false" />
-
     </application>
 
 </manifest>

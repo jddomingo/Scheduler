@@ -33,6 +33,7 @@ import java.util.Calendar;
 
 import static android.content.Context.ALARM_SERVICE;
 import static android.content.Context.NOTIFICATION_SERVICE;
+import static java.lang.Math.abs;
 
 /**
  * Created by Jose Gabriel Domingo on 2/8/17.
@@ -40,6 +41,8 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 public class AlarmReceiver extends BroadcastReceiver {
     private MiBand miBand;
     BluetoothDevice device;
+    int hourToday;
+    int minToday;
 
     @Override
     public void onReceive(final Context context, Intent intent) {
@@ -52,6 +55,9 @@ public class AlarmReceiver extends BroadcastReceiver {
         final int date = intent.getIntExtra("date", 0);
         final int[] days = intent.getIntArrayExtra("days");
         final int weekday = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+        hourToday = Calendar.getInstance().get(Calendar.HOUR);
+        minToday = Calendar.getInstance().get(Calendar.MINUTE);
+        long actual = intent.getLongExtra("actual", 0);
         boolean every = true;
 
         TinyDB tdb = new TinyDB(context);
@@ -73,6 +79,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             receiveIntent.putExtra("string", "repeat");
             receiveIntent.putExtra("date", date);
             receiveIntent.putExtra("days", days);
+            receiveIntent.putExtra("actual", actual);
             context.startService(receiveIntent);
         }
 
@@ -85,8 +92,10 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         Log.e("choose", String.valueOf(chose));
         Log.e("choose", String.valueOf(weekday));
+        Log.e("choosesys", String.valueOf(System.currentTimeMillis()));
+        Log.e("chooseact", String.valueOf(actual));
 
-        if ((chose == 2 && days[weekday-1] == 1) || (chose == 1)) {
+        if (((chose == 2 && days[weekday-1] == 1) || (chose == 1)) && (hourToday == hour && minToday == minute)) {
             //Shows a dialog prompting user to confirm activity
             Intent dialogIntent = new Intent(context, ConfirmActivity.class);
             dialogIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

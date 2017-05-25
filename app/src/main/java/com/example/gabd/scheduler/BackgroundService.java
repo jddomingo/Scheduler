@@ -65,6 +65,8 @@ public class BackgroundService extends IntentService {
             final int date = intent.getIntExtra("date", 0);
             final int chose = intent.getIntExtra("chose", 1);
             final int[] days = intent.getIntArrayExtra("days");
+            long actual = intent.getLongExtra("actual", 0);
+
 
             //Creates intent with alarm info to send back to AlarmReceiver
             Intent myIntent = new Intent(this, AlarmReceiver.class);
@@ -77,8 +79,7 @@ public class BackgroundService extends IntentService {
             myIntent.putExtra("repeat", repeat + 1);
             myIntent.putExtra("days", intent.getIntArrayExtra("days"));
 
-            //Creates a pending intent called by captured by Broadcast Receivers. Contains info about which receiver it is for
-            pending_intent = PendingIntent.getBroadcast(BackgroundService.this, id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
 
             Log.e("chose", String.valueOf(chose));
 
@@ -110,13 +111,18 @@ public class BackgroundService extends IntentService {
                 cal.set(Calendar.SECOND, 0);
                 cal.set(Calendar.HOUR, hour);
             }
+            actual = (long)(actual + interval);
+            myIntent.putExtra("actual", (long)actual);
 
             Log.e("repeat", String.valueOf(interval));
             Log.e("repeatday", String.valueOf(CALENDAR_DAY));
 
+            //Creates a pending intent called by captured by Broadcast Receivers. Contains info about which receiver it is for
+            pending_intent = PendingIntent.getBroadcast(BackgroundService.this, id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
             //Creates a system alarm that sends an intent to the AlarmReceiver
             alarm_manager = (AlarmManager) getSystemService(ALARM_SERVICE);
-            alarm_manager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis() + interval, pending_intent);
+            alarm_manager.setExact(AlarmManager.RTC_WAKEUP, actual, pending_intent);
 
         } else {
             String[] days_of_the_week = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
@@ -208,6 +214,7 @@ public class BackgroundService extends IntentService {
             calendar.set(Calendar.HOUR_OF_DAY, hour);
             calendar.set(Calendar.MINUTE, minute);
             calendar.set(Calendar.SECOND, 0);
+            myIntent.putExtra("actual", (long)(calendar.getTimeInMillis()+1000));
 
             //Creates a pending intent called by captured by Broadcast Receivers. Contains info about which receiver it is for
             pending_intent = PendingIntent.getBroadcast(BackgroundService.this, _id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);

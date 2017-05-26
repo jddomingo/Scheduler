@@ -15,6 +15,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.SystemClock;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
@@ -43,6 +44,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     BluetoothDevice device;
     int hourToday;
     int minToday;
+    int secNow;
 
     @Override
     public void onReceive(final Context context, Intent intent) {
@@ -55,21 +57,23 @@ public class AlarmReceiver extends BroadcastReceiver {
         final int date = intent.getIntExtra("date", 0);
         final int[] days = intent.getIntArrayExtra("days");
         final int weekday = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
-        hourToday = Calendar.getInstance().get(Calendar.HOUR);
+        hourToday = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
         minToday = Calendar.getInstance().get(Calendar.MINUTE);
         long actual = intent.getLongExtra("actual", 0);
         boolean every = true;
+        long prev = intent.getLongExtra("prev", System.currentTimeMillis());
+        int repeat = intent.getIntExtra("repeat", 0);
 
         TinyDB tdb = new TinyDB(context);
 
         Log.e("weekday", String.valueOf(weekday));
 
+        Intent receiveIntent = new Intent(context, BackgroundService.class);
         //Sets new alarm depending on interval
         if (interval > 0) {
-            int repeat = intent.getIntExtra("repeat", 0);
-            Intent receiveIntent = new Intent(context, BackgroundService.class);
             receiveIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             receiveIntent.putExtra("hour", hour);
+            receiveIntent.putExtra("prev", prev);
             receiveIntent.putExtra("minute", minute);
             receiveIntent.putExtra("interval", interval);
             receiveIntent.putExtra("alarm", alarm);
@@ -90,12 +94,29 @@ public class AlarmReceiver extends BroadcastReceiver {
             }
         }
 
-        Log.e("choose", String.valueOf(chose));
-        Log.e("choose", String.valueOf(weekday));
-        Log.e("choosesys", String.valueOf(System.currentTimeMillis()));
-        Log.e("chooseact", String.valueOf(actual));
+        Log.e("chooseweek", String.valueOf(weekday));
+        Log.e("choosedate", String.valueOf(date));
+        Log.e("chooseint", String.valueOf(interval));
 
-        if (((chose == 2 && days[weekday-1] == 1) || (chose == 1)) && (hourToday == hour && minToday == minute)) {
+        boolean checkTrigger = false;
+        if (interval > 0 && chose == 1) {
+            if (minToday == minute && interval == 1000 * 60 * 60) checkTrigger = true;
+            else if (minToday == minute && hourToday == hour && interval == 1000 * 60 * 60 * 24)
+                checkTrigger = true;
+            else if (minToday == minute && hourToday == hour && weekday == date && interval == 1000 * 60 * 60 * 24 * 7)
+                checkTrigger = true;
+        } else if (interval == 0) {
+            checkTrigger = true;
+        } else {
+            if (days[weekday-1] == 1 && minToday == minute && hourToday == hour) {
+                checkTrigger = true;
+            }
+        }
+
+        secNow = Calendar.getInstance().get(Calendar.SECOND);
+        Log.e("secNow", String.valueOf(interval) + String.valueOf(secNow));
+
+        if ((chose == 2 && checkTrigger && secNow < 5) || (chose == 1 && checkTrigger &&  secNow < 5)) {
             //Shows a dialog prompting user to confirm activity
             Intent dialogIntent = new Intent(context, ConfirmActivity.class);
             dialogIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -124,7 +145,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             int connected = tdb.getInt("connected");
             if (connected == 1) connectToMiBand(context);
         }
-}
+    }
 
     /**
      * Connects to a paireed Mi Band device

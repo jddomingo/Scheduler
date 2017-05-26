@@ -76,6 +76,8 @@ public class BackgroundService extends IntentService {
             myIntent.putExtra("intval", interval);
             myIntent.putExtra("_id", id);
             myIntent.putExtra("chose", chose);
+            myIntent.putExtra("date", date);
+            myIntent.putExtra("prev", intent.getLongExtra("prev", 0));
             myIntent.putExtra("repeat", repeat + 1);
             myIntent.putExtra("days", intent.getIntArrayExtra("days"));
 
@@ -114,15 +116,12 @@ public class BackgroundService extends IntentService {
             actual = (long)(actual + interval);
             myIntent.putExtra("actual", (long)actual);
 
-            Log.e("repeat", String.valueOf(interval));
-            Log.e("repeatday", String.valueOf(CALENDAR_DAY));
 
             //Creates a pending intent called by captured by Broadcast Receivers. Contains info about which receiver it is for
             pending_intent = PendingIntent.getBroadcast(BackgroundService.this, id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
             //Creates a system alarm that sends an intent to the AlarmReceiver
             alarm_manager = (AlarmManager) getSystemService(ALARM_SERVICE);
-            alarm_manager.setExact(AlarmManager.RTC_WAKEUP, actual, pending_intent);
+            alarm_manager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000, pending_intent);
 
         } else {
             String[] days_of_the_week = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
@@ -208,6 +207,7 @@ public class BackgroundService extends IntentService {
             myIntent.putExtra("_id", _id);
             myIntent.putExtra("days", days);
             myIntent.putExtra("date", date);
+            myIntent.putExtra("repeat", 0);
 
             //Sets the calendar to the given time
             calendar.setTimeInMillis(System.currentTimeMillis());
@@ -220,7 +220,7 @@ public class BackgroundService extends IntentService {
             pending_intent = PendingIntent.getBroadcast(BackgroundService.this, _id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             //Creates a system alarm that sends an intent to the AlarmReceiver
-            alarm_manager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + 1000, pending_intent);
+            alarm_manager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + 200, pending_intent);
         }
     }
 }

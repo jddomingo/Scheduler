@@ -199,6 +199,7 @@ public class SchedulePage extends AppCompatActivity {
             }
         });
         buttonclick = drawable.buttonclick;
+        once.setChecked(true);
         alarm_start.setOnClickListener(new View.OnClickListener() {
             @TargetApi(Build.VERSION_CODES.M)
             @Override
@@ -226,12 +227,15 @@ public class SchedulePage extends AppCompatActivity {
                 final Editable act_name = edit_text.getText();
                 String interval = new String("once");
                 if (!(choose.isChecked())) {
+                    if (once.isChecked()) {
+                        interval = "once";
+                    } else
                     if (daily.isChecked()) {
                         interval = "daily";
-                    }
+                    } else
                     if (weekly.isChecked()) {
                         interval = "weekly";
-                    }
+                    } else
                     if (hourly.isChecked()) {
                         interval = "hourly";
                     }

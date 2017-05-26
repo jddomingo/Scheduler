@@ -46,7 +46,7 @@
             android:name=".ConfirmActivity"
             android:theme="@style/AppTheme.NoActionBar" />
 
-        <receiver android:name=".AlarmReceiver"></receiver>
+        <receiver android:name=".AlarmReceiver" />
 
         <service
             android:name=".RingtonePlayingService"
@@ -55,6 +55,7 @@
             android:name=".BackgroundService"
             android:enabled="true"
             android:exported="false" />
+
     </application>
 
 </manifest>

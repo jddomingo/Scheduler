@@ -118,6 +118,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         if ((chose == 2 && checkTrigger && secNow < 5) || (chose == 1 && checkTrigger &&  secNow < 5)) {
             //Shows a dialog prompting user to confirm activity
+
             Intent dialogIntent = new Intent(context, ConfirmActivity.class);
             dialogIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             dialogIntent.putExtra("alarm", alarm);

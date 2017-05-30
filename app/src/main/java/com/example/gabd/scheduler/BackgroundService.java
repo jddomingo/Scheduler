@@ -117,11 +117,13 @@ public class BackgroundService extends IntentService {
             myIntent.putExtra("actual", (long)actual);
 
 
+            cal.setTimeInMillis(System.currentTimeMillis());
+            cal.set(Calendar.SECOND, 0);
             //Creates a pending intent called by captured by Broadcast Receivers. Contains info about which receiver it is for
             pending_intent = PendingIntent.getBroadcast(BackgroundService.this, id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             //Creates a system alarm that sends an intent to the AlarmReceiver
             alarm_manager = (AlarmManager) getSystemService(ALARM_SERVICE);
-            alarm_manager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000, pending_intent);
+            alarm_manager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis() + 5000, pending_intent);
 
         } else {
             String[] days_of_the_week = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
@@ -194,7 +196,7 @@ public class BackgroundService extends IntentService {
             final int date = calendar.get(Calendar.DAY_OF_WEEK);
 
             //Creates alarm object and is stored in a database
-            Alarm newalarm = new Alarm(_id, act_name, time, valinter, 0, 0, days, date, chose, hour, minute);
+            Alarm newalarm = new Alarm(_id, act_name, time, valinter, 0, 0, days, date, chose, hour, minute, intval);
             alarmlist.add(newalarm);
             tdb.putListObject(listalarm, alarmlist);
             myIntent.putExtra("name", act_name);

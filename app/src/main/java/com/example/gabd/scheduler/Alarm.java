@@ -18,12 +18,13 @@ public class Alarm implements Serializable{
     int[] days;
     int startdate;
     int chose;
+    int intval;
 
     public Alarm(){
 
     }
 
-    public Alarm(int id, String name, String time, String interval, int donecount, int alarmcount, int[] days, int startdate, int chose, int hour, int minute) {
+    public Alarm(int id, String name, String time, String interval, int donecount, int alarmcount, int[] days, int startdate, int chose, int hour, int minute, int intval) {
         this.id = id;
         this.time = time;
         this.name = name;
@@ -35,6 +36,7 @@ public class Alarm implements Serializable{
         this.chose = chose;
         this.hour = hour;
         this.minute = minute;
+        this.intval = intval;
     }
 
 
